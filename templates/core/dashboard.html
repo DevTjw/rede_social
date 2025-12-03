@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "mensagens/flutuante.html" %}
+<style>
+/* =======================
+   PAINEL.CSS - ESTILO PROFISSIONAL FUTURISTA
+   ======================= */
+
+/* ----- VARIÁVEIS DE CORES PROFISSIONAIS ----- */
+:root {
+  --cor-primaria: #2563eb;
+  --cor-primaria-hover: #1d4ed8;
+  --cor-secundaria: #64748b;
+  --cor-sucesso: #10b981;
+  --cor-fundo-claro: #f8fafc;
+  --cor-fundo-escuro: #0f172a;
+  --cor-card-claro: #ffffff;
+  --cor-card-escuro: #1e293b;
+  --cor-texto-claro: #334155;
+  --cor-texto-escuro: #e2e8f0;
+  --cor-borda-claro: #e2e8f0;
+  --cor-borda-escuro: #334155;
+  --cor-destaque: #06b6d4;
+  --sombra-suave: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --sombra-destaque: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ----- MODO ESCURO ----- */
+[data-theme="dark"] {
+  --cor-fundo: var(--cor-fundo-escuro);
+  --cor-texto: var(--cor-texto-escuro);
+  --cor-card: var(--cor-card-escuro);
+  --cor-borda: var(--cor-borda-escuro);
+}
+
+[data-theme="light"], :root {
+  --cor-fundo: var(--cor-fundo-claro);
+  --cor-texto: var(--cor-texto-claro);
+  --cor-card: var(--cor-card-claro);
+  --cor-borda: var(--cor-borda-claro);
+}
+
+/* ----- BASE E TIPOGRAFIA ----- */
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* ----- CABEÇALHO DO PERFIL ----- */
+.perfil-header {
+  background: linear-gradient(135deg, var(--cor-card) 0%, rgba(37, 99, 235, 0.05) 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--cor-borda);
+  backdrop-filter: blur(10px);
+}
+
+.perfil-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--cor-primaria);
+  box-shadow: var(--sombra-suave);
+}
+
+.perfil-info h4 {
+  color: var(--cor-texto);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.perfil-bio {
+  color: var(--cor-secundaria);
+  font-size: 0.95rem;
+}
+
+/* ----- ESTATÍSTICAS ----- */
+.estatisticas-container {
+  background: var(--cor-card);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-suave);
+}
+
+.estatisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.estatistica-item {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(100, 116, 139, 0.05) 100%);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+  border: 1px solid var(--cor-borda);
+  transition: all 0.3s ease;
+}
+
+.estatistica-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-destaque);
+}
+
+.estatistica-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  display: block;
+}
+
+.estatistica-label {
+  font-size: 0.85rem;
+  color: var(--cor-secundaria);
+  margin-top: 0.5rem;
+}
+
+/* ----- CARDS MODERNOS ----- */
+.card-moderno {
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--sombra-suave);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.card-moderno:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-destaque);
+}
+
+.card-titulo {
+  color: var(--cor-texto);
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  font-size: 1.25rem;
+  border-bottom: 2px solid var(--cor-primaria);
+  padding-bottom: 0.5rem;
+}
+
+/* ----- LISTA DE CONVERSAS ----- */
+.conversas-lista {
+  background: var(--cor-card);
+  border-radius: 1rem;
+  border: 1px solid var(--cor-borda);
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+}
+
+.conversa-item {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--cor-borda);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.conversa-item:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.conversa-item:last-child {
+  border-bottom: none;
+}
+
+.conversa-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.conversa-info {
+  flex: 1;
+}
+
+.conversa-nome {
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 0.25rem;
+}
+
+.conversa-meta {
+  font-size: 0.85rem;
+  color: var(--cor-secundaria);
+}
+
+.badge-notificacao {
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-destaque));
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ----- BOTÕES ----- */
+.btn-moderno {
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-destaque));
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--sombra-suave);
+}
+
+.btn-moderno:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-destaque);
+  background: linear-gradient(135deg, var(--cor-primaria-hover), var(--cor-destaque));
+  color: white;
+}
+
+.btn-secundario {
+  background: var(--cor-secundaria);
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  color: white;
+  font-weight: 600;
+}
+
+/* ----- IMAGENS ----- */
+.imagem-post {
+  border-radius: 0.75rem;
+  max-height: 300px;
+  object-fit: cover;
+  width: 100%;
+  margin: 1rem 0;
+  box-shadow: var(--sombra-suave);
+}
+
+/* ----- LAYOUT RESPONSIVO ----- */
+@media (max-width: 992px) {
+  .estatisticas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .perfil-header {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .estatisticas-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .perfil-header {
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .card-moderno {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .estatistica-item {
+    padding: 1rem;
+  }
+  
+  .conversa-item {
+    padding: 1rem;
+  }
+  
+  .btn-moderno {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ----- ANIMAÇÕES ----- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-moderno, .estatistica-item, .conversa-item {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ----- ESTADO VAZIO ----- */
+.estado-vazio {
+  text-align: center;
+  padding: 2rem;
+  color: var(--cor-secundaria);
+  font-style: italic;
+}
+
+.estado-vazio i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--cor-borda);
+}
+</style>
+
+<div class="container py-4">
+
+  <!-- Cabeçalho do Perfil -->
+  <div class="perfil-header d-flex align-items-center">
+    {% if perfil.foto %}
+      <img src="{{ perfil.foto }}" class="perfil-avatar me-4" alt="Foto de perfil">
+    {% else %}
+      <div class="perfil-avatar me-4 d-flex align-items-center justify-content-center bg-primary text-white">
+        <i class="fas fa-user-circle fa-3x"></i>
+      </div>
+    {% endif %}
+    <div class="perfil-info">
+      <h4 class="mb-1">{{ perfil.username }}</h4>
+      <div class="perfil-bio">{{ perfil.bio|default:"Sem descrição." }}</div>
+    </div>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="estatisticas-container">
+    <h3 class="card-titulo">Estatísticas da Conta</h3>
+    <div class="estatisticas-grid">
+      <div class="estatistica-item">
+        <span class="estatistica-valor">{{ estatisticas.total_posts }}</span>
+        <span class="estatistica-label">Total de Posts</span>
+      </div>
+      <div class="estatistica-item">
+        <span class="estatistica-valor">{{ estatisticas.total_comentarios }}</span>
+        <span class="estatistica-label">Comentários</span>
+      </div>
+      <div class="estatistica-item">
+        <span class="estatistica-valor">{{ estatisticas.total_curtidas_recebidas }}</span>
+        <span class="estatistica-label">Curtidas Recebidas</span>
+      </div>
+      <div class="estatistica-item">
+        <span class="estatistica-valor">{{ estatisticas.total_mensagens_enviadas }}</span>
+        <span class="estatistica-label">Mensagens Enviadas</span>
+      </div>
+      <div class="estatistica-item">
+        <span class="estatistica-valor">{{ estatisticas.total_mensagens_recebidas }}</span>
+        <span class="estatistica-label">Mensagens Recebidas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversas -->
+  <div class="card-moderno">
+    <h3 class="card-titulo">Suas Conversas</h3>
+    <div class="conversas-lista">
+      {% for conversa in conversas %}
+        <a href="{% url 'mensagens:conversa' conversa.outro_username %}" class="conversa-item text-decoration-none">
+          <div class="d-flex align-items-center">
+            {% if conversa.outro_foto %}
+              <img src="{{ conversa.outro_foto }}" class="conversa-avatar" alt="{{ conversa.outro_username }}">
+            {% else %}
+              <div class="conversa-avatar bg-primary d-flex align-items-center justify-content-center text-white">
+                <i class="fas fa-user"></i>
+              </div>
+            {% endif %}
+            <div class="conversa-info">
+              <div class="conversa-nome">{{ conversa.outro_username }}</div>
+              <div class="conversa-meta">
+                {{ conversa.total }} mensagens • {{ conversa.ultima_data|date:"d/m/Y H:i" }}
+              </div>
+            </div>
+          </div>
+          {% if conversa.nao_lidas > 0 %}
+            <span class="badge-notificacao">{{ conversa.nao_lidas }}</span>
+          {% endif %}
+        </a>
+      {% empty %}
+        <div class="estado-vazio">
+          <i class="fas fa-comments"></i>
+          <div>Nenhuma conversa encontrada</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <!-- Feed Principal -->
+    <div class="col-lg-8">
+      <div class="card-moderno">
+        <h3 class="card-titulo">Seu Feed</h3>
+        {% for post in posts %}
+          <div class="card-moderno mb-3">
+            <div class="d-flex align-items-center mb-3">
+                {% if post.autor.perfil.foto_perfil %}
+                <img src="{{ post.autor.perfil.foto_perfil.url }}" class="conversa-avatar" alt="{{ post.autor.username }}">
+                {% else %}
+                  <div class="conversa-avatar bg-primary d-flex align-items-center justify-content-center text-white">
+                    <i class="fas fa-user"></i>
+                  </div>
+                {% endif %}
+              <div>
+                <strong class="conversa-nome">{{ post.autor.username }}</strong>
+                <div class="conversa-meta">{{ post.data_criacao|date:"d/m/Y H:i" }}</div>
+              </div>
+            </div>
+            
+            <p class="mb-3">{{ post.conteudo }}</p>
+            
+            {% if post.imagem %}
+              <img src="{{ post.imagem.url }}" class="imagem-post" alt="Imagem do post">
+            {% endif %}
+            
+            <div class="d-flex justify-content-between text-muted small mt-3">
+              <span><i class="fas fa-heart text-danger"></i> <span class="like-count">{{ post.num_curtidas }}</span> curtidas</span>
+              <span><i class="fas fa-comment"></i> {{ post.num_comentarios }} comentários</span>
+            </div>
+          </div>
+        {% empty %}
+          <div class="estado-vazio">
+            <i class="fas fa-newspaper"></i>
+            <div>Nenhum post no seu feed</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Comentários Recentes -->
+      <div class="card-moderno mb-4">
+        <h4 class="card-titulo">Comentários Recentes</h4>
+        {% for c in comentarios_recentes %}
+          <div class="mb-3 pb-3 border-bottom border-light">
+            <div class="d-flex align-items-center mb-2">
+              <strong class="text-primary">{{ c.autor.username }}</strong>
+              <small class="text-muted ms-2">{{ c.data_criacao|date:"d/m/Y H:i" }}</small>
+            </div>
+            <p class="small mb-1">{{ c.texto }}</p>
+            <small class="text-muted">em "{{ c.post.conteudo|truncatechars:30 }}"</small>
+          </div>
+        {% empty %}
+          <div class="estado-vazio py-3">
+            <i class="fas fa-comment"></i>
+            <div>Nenhum comentário recente</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Top Posts -->
+      <div class="card-moderno mb-4">
+        <h4 class="card-titulo">Posts em Destaque</h4>
+        {% for tp in top_posts %}
+          <div class="mb-3 pb-3 border-bottom border-light">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <strong>{{ tp.autor.username }}</strong>
+              <span class="badge bg-success">{{ tp.num_curtidas }} ♥</span>
+            </div>
+            <p class="small mb-0">{{ tp.conteudo|truncatechars:60 }}</p>
+          </div>
+        {% empty %}
+          <div class="estado-vazio py-3">
+            <i class="fas fa-chart-line"></i>
+            <div>Nenhum post popular</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Sugestões -->
+      <div class="card-moderno">
+        <h4 class="card-titulo">Sugestões para Seguir</h4>
+
+        {% for u in sugestoes %}
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-light">
+            <div>
+              <strong class="d-block">{{ u.username }}</strong>
+              <small class="text-muted">
+                <span class="followers-count-{{ u.username }}">
+                  {{ u.num_seguidores }}
+                </span> seguidores
+              </small>
+            </div>
+
+            {% if u.ja_segue %}
+              <button 
+                class="btn btn-secundario btn-sm follow-btn"
+                data-username="{{ u.username }}">
+                Cancelar
+              </button>
+            {% else %}
+              <button 
+                class="btn btn-moderno btn-sm follow-btn"
+                data-username="{{ u.username }}">
+                Seguir
+              </button>
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="estado-vazio py-3">
+            <i class="fas fa-users"></i>
+            <div>Nenhuma sugestão</div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+// Pega o CSRF do cookie
+function getCookie(name) {  
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Clique nos botões de seguir
+document.querySelectorAll('.follow-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+
+        const username = this.dataset.username;
+        const button = this;
+        const countSpan = document.querySelector(`.followers-count-${username}`);
+
+        fetch(`/usuarios/seguir/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Atualiza texto do botão
+            if (data.seguindo) {
+                button.innerHTML = "Cancelar";
+                button.classList.remove("btn-moderno");
+                button.classList.add("btn-secundario");
+            } else {
+                button.innerHTML = "Seguir";
+                button.classList.remove("btn-secundario");
+                button.classList.add("btn-moderno");
+            }
+
+            // Atualiza contagem de seguidores local
+            if (countSpan) {
+                countSpan.textContent = data.seguidores;
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Erro - SocialNet{% endblock %}
+
+{% block content %}
+<style>
+    .error-wrapper {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        text-align: center;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    .error-box {
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        max-width: 500px;
+        width: 100%;
+        background-color: var(--box-bg);
+    }
+
+    .error-box h1 {
+        color: var(--error-color);
+        font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+
+    .error-box p {
+        font-size: 1.1em;
+        margin-bottom: 30px;
+        color: var(--text-color);
+    }
+
+    .error-box a {
+        display: inline-block;
+        background-color: var(--button-bg);
+        color: #fff;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .error-box a:hover {
+        background-color: var(--button-hover-bg);
+    }
+
+    .error-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+        fill: var(--error-color);
+    }
+
+    @media (max-width: 600px) {
+        .error-box {
+            padding: 20px;
+        }
+
+        .error-box h1 {
+            font-size: 1.8em;
+        }
+    }
+
+    /* 🎨 Tema Claro */
+    html[data-bs-theme='light'] {
+        --bg-color: #7abdffb4;
+        --box-bg: #82b4ff9d;
+        --text-color: #000000;
+        --error-color: #ff0015;
+        --button-bg: #2e6688;
+        --button-hover-bg: #1d3557;
+    }
+
+    /* 🌙 Tema Escuro */
+    html[data-bs-theme='dark'] {
+        --bg-color: #ffffff00;
+        --box-bg: #3b3b3b94;
+        --text-color: #f1f1f1;
+        --error-color: #ff0000;
+        --button-bg: #3a86ff;
+        --button-hover-bg: #265cbf;
+    }
+</style>
+
+<div class="error-wrapper">
+    <div class="error-box">
+        <!-- Ícone de erro SVG -->
+        <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M11.001 10h2v5h-2zm0 6h2v2h-2z"/>
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-3h-2v-5h2v5z"/>
+        </svg>
+
+        <h1>{{ titulo }}</h1>
+        <p>{{ mensagem }}</p>
+        <a href="{% url 'home' %}">← Voltar para a página inicial</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/chat_usuario.css' %}">
+
+<style>
+  .mensagem.enviada { text-align: left; }
+  .mensagem.recebida { text-align: left; }
+
+  /* Flex para separar data e botão de edição */
+  .mensagem .info-msg {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    color: #6c757d;
+  }
+
+  .btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  /* Modal básico sem Bootstrap JS */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal.show { display: flex; }
+
+  .modal-content {
+    background: #fff;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .modal-header, .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  /* ===== BASE ===== */
+.chat-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;      /* limite de largura para telas grandes */
+  margin: 0 auto;
+  background: rgba(192, 192, 192, 0.3);
+  border-radius: 20px;
+  padding: 20px;
+  min-height: 80vh;
+}
+
+/* Cabeçalho do chat */
+.chat-header {
+  position: relative;          /* necessário para posicionar o botão voltar */
+  display: flex;
+  justify-content: center;     /* centraliza conteúdo (imagem + username) */
+  align-items: center;
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.chat-header .voltar {
+  position: absolute;          /* botão à esquerda */
+  left: 10px;
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+
+.profile-pic-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Caixa de mensagens */
+#chat-box {
+  flex: 1 1 auto;
+  overflow-y: auto;              /* adiciona rolagem vertical */
+  max-height: 60vh;              /* limite de altura para grandes telas */
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* Mensagens */
+.mensagem {
+  margin-bottom: 8px;
+}
+
+.mensagem .conteudo {
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* Formulário de envio */
+#form-chat {
+  display: flex;
+  gap: 6px;
+}
+
+/* ===== RESPONSIVO: telas até 768px ===== */
+@media (max-width: 768px) {
+  .chat-wrapper {
+    width: 95%;
+    padding: 10px;
+    min-height: 70vh;
+  }
+
+  #chat-box {
+    max-height: 55vh;
+  }
+
+  .chat-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .profile-pic-sm {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* ===== RESPONSIVO: telas até 448px ===== */
+@media (max-width: 448px) {
+  .chat-wrapper {
+    width: 96%;
+    padding: 8px;
+  }
+
+  #chat-box {
+    max-height: 50vh;
+  }
+
+  .chat-header h2 {
+    font-size: 1rem;
+  }
+
+  .profile-pic-sm {
+    width: 30px;
+    height: 30px;
+  }
+
+  #form-chat input, #form-chat button {
+    font-size: 0.9rem;
+    padding: 6px 8px;
+  }
+}
+
+/* ===== RESPONSIVO: telas menores que 328px ===== */
+@media (max-width: 328px) {
+  .chat-wrapper {
+    width: 98%;
+    padding: 5px;
+  }
+
+  #chat-box {
+    max-height: 45vh;
+  }
+
+  .chat-header h2 {
+    font-size: 0.9rem;
+  }
+
+  .profile-pic-sm {
+    width: 25px;
+    height: 25px;
+  }
+
+  #form-chat input, #form-chat button {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+  }
+}
+
+</style>
+
+<div class="container mt-4 chat-wrapper">
+
+  <!-- Cabeçalho do chat -->
+  <div class="chat-header">
+    <a href="{% url 'mensagens:caixa_entrada' %}" class="voltar">←</a>
+
+    {% if outro_usuario.perfil.foto_perfil %}
+      <img src="{{ outro_usuario.perfil.foto_perfil.url }}" alt="Foto" class="profile-pic-sm">
+      <h2 class="chat-title">Conversa com {{ outro_usuario.username }}</h2>
+    {% else %}
+      <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+      <h2 class="chat-title">Conversa com {{ outro_usuario.username }}</h2>
+    {% endif %}
+  </div>
+
+  <!-- Caixa de mensagens -->
+  <div id="chat-box">
+    {% for msg in mensagens %}
+      <div class="mensagem {% if msg.remetente == request.user %}enviada{% else %}recebida{% endif %}"
+           data-id="{{ msg.id }}">
+      
+        <div class="conteudo {% if msg.remetente == request.user %}bg-primary text-white{% else %}bg-light{% endif %} p-2 rounded">
+          {{ msg.conteudo|safe }}
+          {% if msg.editado %}<small>(editado)</small>{% endif %}
+          <div class="info-msg">
+            <small>{{ msg.data_envio|date:"d/m/Y H:i" }}</small>
+            {% if msg.remetente == request.user %}
+              <button class="btn btn-sm btn-link editar-msg">✏️</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted text-center mt-3">Nenhuma mensagem nesta conversa.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Formulário de envio -->
+  <form id="form-chat">
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" name="conteudo" id="mensagem-input" class="form-control"
+             placeholder="Digite sua mensagem..." required>
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+  </form>
+
+  <div class="text-center">
+    <a href="{% url 'mensagens:caixa_entrada' %}" class="btn btn-primary mt-3">← Voltar</a>
+  </div>
+
+</div>
+
+<!-- Modal Editar -->
+<div id="modalEditarMsg" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Editar mensagem</h5>
+      <button class="btn-close" id="modal-fechar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="editar-conteudo" class="form-control" rows="4"></textarea>
+      <input type="hidden" id="editar-id">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="modal-cancelar">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="btn-salvar-edicao">Salvar</button>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+/* ------------------ VARIÁVEIS ------------------ */
+const chatBox = document.getElementById('chat-box');
+const form = document.getElementById('form-chat');
+const input = document.getElementById('mensagem-input');
+
+const username = "{{ outro_usuario.username }}";
+const urlAtualizar = `/mensagens/conversa/${username}/atualizar/`;
+const urlEnviar = `/mensagens/conversa/${username}/enviar/`;   // CORRIGIDO
+
+const modal = document.getElementById('modalEditarMsg');
+const textareaEditar = document.getElementById('editar-conteudo');
+const inputIdEditar = document.getElementById('editar-id');
+
+/* ------------------ FUNÇÕES ------------------ */
+function scrollToBottom() {
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function renderizarMensagens(mensagens) {
+  chatBox.innerHTML = "";
+
+  mensagens.forEach(msg => {
+    const div = document.createElement("div");
+    div.classList.add("mensagem", msg.proprio ? "enviada" : "recebida");
+    div.dataset.id = msg.id;
+
+    div.innerHTML = `
+      <div class="conteudo ${msg.proprio ? "bg-primary text-white" : "bg-light"} p-2 rounded">
+        ${msg.conteudo}
+        ${msg.editado ? "<small>(editado)</small>" : ""}
+        <div class="info-msg">
+          <small>${msg.data_envio}</small>   <!-- CORRETO -->
+          ${msg.proprio ? '<button class="btn btn-sm btn-link editar-msg">✏️</button>' : ""}
+        </div>
+      </div>
+    `;
+    chatBox.appendChild(div);
+  });
+
+  scrollToBottom();
+}
+
+async function atualizarChat() {
+  try {
+    const resp = await fetch(urlAtualizar);
+    const data = await resp.json();
+    renderizarMensagens(data.mensagens);
+  } catch (e) {
+    console.error("Erro ao atualizar chat:", e);
+  }
+}
+
+setInterval(atualizarChat, 55000);
+
+/* ------------------ ENVIO DE MENSAGEM ------------------ */
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const conteudo = input.value.trim();
+  if (!conteudo) return;
+
+  const csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  await fetch(urlEnviar, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": csrf,
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({ conteudo })
+  });
+
+  input.value = "";
+  atualizarChat();
+});
+
+/* ------------------ MODAL ------------------ */
+function abrirModal() { modal.classList.add('show'); }
+function fecharModal() { modal.classList.remove('show'); }
+
+chatBox.addEventListener("click", e => {
+  if (e.target.classList.contains("editar-msg")) {
+    const msgDiv = e.target.closest(".mensagem");
+    const id = msgDiv.dataset.id;
+    const conteudoOriginal = msgDiv.querySelector(".conteudo").childNodes[0].textContent.trim();
+
+    inputIdEditar.value = id;
+    textareaEditar.value = conteudoOriginal;
+    abrirModal();
+  }
+});
+
+document.getElementById('modal-fechar').addEventListener("click", fecharModal);
+document.getElementById('modal-cancelar').addEventListener("click", fecharModal);
+
+/* ------------------ SALVAR EDIÇÃO ------------------ */
+document.getElementById("btn-salvar-edicao").addEventListener("click", async () => {
+  const id = inputIdEditar.value;
+  const conteudo = textareaEditar.value.trim();
+  if (!conteudo) return;
+
+  const csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+  try {
+    const resp = await fetch(`/mensagens/mensagem/${id}/editar/`, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrf,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ conteudo })
+    });
+    const data = await resp.json();
+
+    if (!data.error) {
+      const msgDiv = chatBox.querySelector(`.mensagem[data-id='${id}'] .conteudo`);
+      msgDiv.innerHTML = `
+        ${data.conteudo} <small>(editado)</small>
+        <div class="info-msg">
+          <small>${data.data_envio}</small>
+          <button class="btn btn-sm btn-link editar-msg">✏️</button>
+        </div>
+      `;
+      fecharModal();
+      scrollToBottom();
+    } else {
+      alert(data.error);
+    }
+  } catch (e) {
+    console.error("Erro ao editar mensagem:", e);
+  }
+});
+
+scrollToBottom();
+</script>
+{% endblock %}
+{% endblock %}

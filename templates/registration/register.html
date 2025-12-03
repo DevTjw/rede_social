@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastrar - SocialNet{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2>Criar Conta</h2>
+                    <p class="text-muted">Junte-se à nossa comunidade</p>
+                </div>
+                
+                <form method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_first_name" class="form-label">Nome</label>
+                                <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="id_first_name" required>
+                                {% for error in form.first_name.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_last_name" class="form-label">Sobrenome</label>
+                                <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="id_last_name" required>
+                                {% for error in form.last_name.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Usuário</label>
+                        <input type="text" name="username" value="{{ form.username.value|default:'' }}" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" required>
+                        <div class="form-text">Escolha um nome de usuário único.</div>
+                        {% for error in form.username.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- EMAIL PRINCIPAL -->
+                    <div class="mb-3">
+                        <label for="id_email1" class="form-label">Email</label>
+                        <input type="email" name="email1" value="{{ form.email1.value|default:'' }}" class="form-control {% if form.email1.errors %}is-invalid{% endif %}" id="id_email1" required>
+                        {% for error in form.email1.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- CONFIRMAÇÃO DE EMAIL -->
+                    <div class="mb-3">
+                        <label for="id_email2" class="form-label">Confirme o Email</label>
+                        <input type="email" name="email2" value="{{ form.email2.value|default:'' }}" class="form-control {% if form.email2.errors %}is-invalid{% endif %}" id="id_email2" required>
+                        {% for error in form.email2.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- SENHA -->
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Senha</label>
+
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                name="password1" 
+                                class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                id="id_password1" 
+                                required
+                            >
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                id="togglePassword1"
+                            >
+                                <i class="bi bi-eye" id="iconPassword1"></i>
+                            </button>
+                        </div>
+
+                        <div class="form-text">Sua senha deve conter pelo menos 8 caracteres.</div>
+
+                        {% for error in form.password1.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- CONFIRMAR SENHA -->
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">Confirmar Senha</label>
+
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                name="password2" 
+                                class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                id="id_password2" 
+                                required
+                            >
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                id="togglePassword2"
+                            >
+                                <i class="bi bi-eye" id="iconPassword2"></i>
+                            </button>
+                        </div>
+
+                        {% for error in form.password2.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Criar Conta</button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+                <div class="text-center">
+                    <p>Já tem uma conta? <a href="{% url 'login' %}">Faça login</a></p>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'solicitar_redefinicao_senha' %}">Esqueceu sua senha?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function setupPasswordToggle(inputId, iconId, buttonId) {
+    document.getElementById(buttonId).addEventListener("click", function () {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("bi-eye", "bi-eye-slash"); // olho fechado
+        } else {
+            input.type = "password";
+            icon.classList.replace("bi-eye-slash", "bi-eye"); // olho aberto
+        }
+    });
+}
+
+setupPasswordToggle("id_password1", "iconPassword1", "togglePassword1");
+setupPasswordToggle("id_password2", "iconPassword2", "togglePassword2");
+</script>
+
+{% endblock %}
+

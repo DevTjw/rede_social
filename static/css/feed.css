@@ -1,0 +1,434 @@
+
+/* ==========================
+   VARIÁVEIS GERAIS
+========================== */
+:root {
+    --transition: 0.3s ease;
+    --radius: 12px;
+    --accent: #00c6ff;
+    --accent-dark: #0094d9;
+}
+
+/* ==========================
+   TEMA CLARO
+========================== */
+body.light-mode {
+    --bg: #f4f6fa;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --text: #1b1d20;
+    --muted: #6c757d;
+    --border: rgba(0, 0, 0, 0.1);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --accent-glow: 0 0 12px rgba(0, 198, 255, 0.3);
+}
+
+/* ==========================
+   TEMA ESCURO
+========================== */
+body.dark-mode {
+    --bg: #0d1117;
+    --card-bg: rgba(36, 39, 46, 0.65);
+    --text: #e6edf3;
+    --muted: #a1a1aa;
+    --border: rgba(255, 255, 255, 0.08);
+    --shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+    --accent-glow: 0 0 15px rgba(0, 198, 255, 0.6);
+}
+
+/* ==========================
+   BASE
+========================== */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", sans-serif;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ==========================
+   CARDS
+========================== */
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--accent-glow);
+}
+
+/* ==========================
+   POSTS
+========================== */
+.post-card {
+    margin-bottom: 1.5rem;
+}
+.post-card .card-body {
+    padding: 1.3rem;
+}
+.post-card p {
+    line-height: 1.6;
+}
+
+/* ==========================
+   IMAGENS
+========================== */
+.img-fluid,
+.post-card img,
+.card img {
+    border-radius: var(--radius);
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 1rem auto; /* espaço vertical e centralização */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Leve destaque ao passar o mouse */
+.img-fluid:hover,
+.post-card img:hover,
+.card img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 50px rgba(0, 198, 255, 0.25);
+}
+/* ==========================
+   BOTÕES
+========================== */
+.btn-primary, .btn-outline-primary {
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: transparent;
+    transition: all var(--transition);
+}
+.btn-primary:hover, .btn-outline-primary:hover {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--accent-glow);
+}
+.like-btn.liked i {
+    color: #ff3366 !important;
+    text-shadow: 0 0 10px #ff3366;
+    animation: pulse 0.3s ease;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+/* ==========================
+   COMENTÁRIOS
+========================== */
+.comentario {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    transition: background-color var(--transition), transform 0.3s;
+    display: flex;
+    display: flex;
+    justify-content: flex-end; /* alinha horizontalmente à direita */
+    align-items: flex-start;   /* alinha verticalmente ao topo (ou "à esquerda" visualmente, se for eixo vertical) */
+    gap: 1rem;
+    margin-top: 0.3rem;
+    margin-left: 0.2rem;
+}
+.comentario:hover {
+    background-color: rgba(0,198,255,0.05);
+    transform: scale(1.01);
+     align-items: left;
+    justify-content: flex-end; /* Alinha à esquerda */
+}
+
+/* ==========================
+   SIDEBAR (FUTURISTA)
+========================== */
+.sidebar {
+    position: sticky;
+    top: 80px;
+    background: linear-gradient(135deg, rgba(0,198,255,0.08), rgba(0,120,255,0.05));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+.sidebar h4 {
+    color: var(--accent);
+    text-shadow: 0 0 6px rgba(0,198,255,0.3);
+    font-weight: 600;
+}
+/* ==========================
+   SUGESTÕES DE USUÁRIO (GRID → LISTA)
+========================== */
+
+/* layout padrão em telas grandes */
+.usuario-sugestao {
+    width: calc(50% - 0.5rem);
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.04);
+    transition: transform var(--transition), box-shadow var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+
+body.dark-mode .usuario-sugestao {
+    background: rgba(255,255,255,0.03);
+}
+
+.usuario-sugestao:hover {
+    transform: scale(1.05);
+    box-shadow: var(--accent-glow);
+}
+
+/* imagem do usuário */
+.usuario-sugestao img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+/* nome */
+.usuario-sugestao p {
+    font-weight: 600;
+    margin: 5;
+    color: var(--text);
+}
+
+/* botão seguir */
+.seguir-btn {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: transparent;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+    font-weight: 500;
+}
+.seguir-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--accent-glow);
+}
+
+/* ==========================
+   SIDEBAR RETRÁTIL (MOBILE)
+========================== */
+#btn-toggle-sidebar {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 1.6rem;
+    box-shadow: var(--accent-glow);
+    z-index: 1050;
+    transition: transform 0.3s ease;
+}
+#btn-toggle-sidebar:hover {
+    transform: scale(1.1);
+}
+/* ==========================
+   STATUS MESSAGE
+========================== */
+#mensagem-status {
+    width: 100%;
+    background: linear-gradient(90deg, rgba(25,135,84,0.9), rgba(0,198,255,0.9));
+    font-weight: 600;
+    border-radius: var(--radius);
+    padding: 0.6rem;
+    text-align: right !important; /* 👈 alinha texto recebido via AJAX à direita */
+    box-shadow: var(--accent-glow);
+}
+
+
+@media (max-width: 991px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        max-height: 150vh;
+        border-radius: 20px 20px 0 0;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        transform: translateY(100%);
+        transition: transform 0.4s ease-in-out;
+        z-index: 1000;
+        overflow-y: auto;
+        padding-bottom: 100px;
+    }
+    .sidebar.active {
+        transform: translateY(0);
+        box-shadow: 0 0px 0px rgba(0,198,255,0.3);
+    }
+    .sidebar::-webkit-scrollbar {
+        width: 0px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 10px;
+    }
+#btn-toggle-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;      /* aumenta a largura */
+    height: 43px;     /* aumenta a altura */
+    font-size: 1.8rem; /* aumenta ícone/texto dentro */
+    border-radius: 50%; /* mantém o formato circular */
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--accent-glow);
+    z-index: 1050;
+    transition: transform 0.3s ease;
+}
+
+#btn-toggle-sidebar:hover {
+    transform: scale(1.1);
+}
+
+     /* Mantém compatível com sidebar mobile já existente */
+   #sugestoes-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .usuario-sugestao {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        padding: 0.9rem 1.2rem;
+        border-radius: var(--radius);
+        background: var(--card-bg);
+        box-shadow: var(--shadow);
+    }
+
+    .usuario-sugestao img {
+        width: 48px;
+        height: 48px;
+        margin: 0;
+        border-width: 1.5px;
+    }
+
+    .usuario-sugestao p {
+        flex: 1;
+        margin-left: 1rem;
+        font-size: 0.95rem;
+        color: var(--text);
+    }
+
+    .seguir-btn {
+        width: auto;
+        white-space: nowrap;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.8rem;
+    }
+    .usuario-sugestao:hover {
+        transform: translateX(4px);
+        box-shadow: 0 0 12px rgba(0,198,255,0.35);
+    }
+}
+/* ==========================
+   COMENTÁRIOS
+========================== */
+.comentario {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    transition: background-color var(--transition), transform 0.3s;
+    display: flex;
+    display: flex;
+    justify-content: flex-end; /* alinha horizontalmente à direita */
+    align-items: flex-start;   /* alinha verticalmente ao topo (ou "à esquerda" visualmente, se for eixo vertical) */
+    gap: 1rem;
+    margin-top: 0.3rem;
+    margin-left: 0.2rem;
+}
+.comentario:hover {
+    background-color: rgba(0,198,255,0.05);
+    transform: scale(1.01);
+     align-items: left;
+    justify-content: flex-end; /* Alinha à esquerda */
+}
+
+
+
+/* ==========================
+   IMAGENS — COM ESPAÇAMENTO HARMÔNICO
+========================== */
+.img-fluid,
+.post-card img,
+.card img {
+    border-radius: var(--radius);
+    max-width: 70%;
+    object-fit: cover;
+    display: block;
+    margin: 1rem auto; /* espaço vertical e centralização */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Leve destaque ao passar o mouse */
+.img-fluid:hover,
+.post-card img:hover,
+.card img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(0, 198, 255, 0.25);
+}
+
+/* ==========================
+   MODAIS
+========================== */
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text);
+    border-radius: var(--radius);
+    backdrop-filter: blur(15px);
+}
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+/* ==========================
+   STATUS MESSAGE
+========================== */
+#mensagem-status {
+    width: 100%;
+    background: linear-gradient(90deg, rgba(25,135,84,0.9), rgba(0,198,255,0.9));
+    font-weight: 600;
+    border-radius: var(--radius);
+    padding: 0.6rem;
+    text-align: right !important; /* 👈 alinha texto recebido via AJAX à direita */
+    box-shadow: var(--accent-glow);
+}

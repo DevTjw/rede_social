@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar Usuários - SocialNet{% endblock %}
+
+{% block content %}
+{% include "mensagens/flutuante.html" %}
+<link rel="stylesheet" href="{% static 'css/buscar_usuarios.css' %}">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Buscar Usuários</h4>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar por nome ou username..." value="{{ query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+                
+                {% if query %}
+                <h5>Resultados para "{{ query }}"</h5>
+                
+                {% if usuarios %}
+                <div class="list-group">
+                    {% for usuario in usuarios %}
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            {% if usuario.perfil.foto_perfil %}
+                            <img src="{{ usuario.perfil.foto_perfil.url }}" class="profile-pic-sm me-1" title="{{ usuario.get_full_name|default:usuario.username }}">
+                            {% else %}
+                            <i class="fas fa-user-circle fa-2x"></i>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ usuario.get_full_name|default:usuario.username }}</h6>
+                                <small class="text-muted">@{{ usuario.username }}</small>
+                                {% if usuario.perfil.localizacao %}
+                                <div class="mt-1">
+                                    <small><i class="fas fa-map-marker-alt"></i> {{ usuario.perfil.localizacao }}</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{% url 'perfil' usuario.username %}" class="btn btn-sm btn-outline-primary me-1">
+                                    Ver Perfil
+                                </a>
+                                {% if usuario != user %}
+                                <button class="btn btn-sm follow-btn {% if user in usuario.perfil.seguidores.all %}btn-secondary{% else %}btn-primary{% endif %}" 
+                                        data-username="{{ usuario.username }}">
+                                    <i class="fas {% if user in usuario.perfil.seguidores.all %}fa-user-minus{% else %}fa-user-plus{% endif %} me-1"></i>
+                                    {% if user in usuario.perfil.seguidores.all %}Cancelar{% else %}Seguir{% endif %}
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5>Nenhum usuário encontrado</h5>
+                    <p class="text-muted">Tente buscar com outros termos.</p>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>Encontre pessoas</h5>
+                    <p class="text-muted">Digite um nome ou username para buscar.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener ('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.follow-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const username = this.dataset.username;
+                const csrfToken = getCookie('csrftoken');
+                const buttonElement = this;
+
+                fetch(`/usuarios/seguir/${username}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.seguindo !== undefined) {
+                        if (data.seguindo) {
+                            buttonElement.classList.remove('btn-primary');
+                            buttonElement.classList.add('btn-secondary');
+                            buttonElement.textContent = 'Cancelar';
+                        } else {
+                            buttonElement.classList.remove('btn-secondary');
+                            buttonElement.classList.add('btn-primary');
+                            buttonElement.textContent = 'Seguir';
+                        }
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                });
+            });
+        });
+
+        // Função para pegar o CSRF do cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+
+        }
+ });
+</script>
+
+{% block extra_css %}
+
+{% endblock %}
+<hr>
+teste
+
+{% endblock %}

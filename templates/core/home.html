@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - SocialNet{% endblock %}
+
+{% block content %}
+{% include "mensagens/flutuante.html" %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/futurista.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div class="dashboard">
+
+  <!-- Botão do menu (hamburger) -->
+  <button class="menu-toggle" id="menuToggle">☰</button>
+
+  <!-- Sidebar futurista -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>SocialNet Futuro</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="#weather"><i class="fas fa-cloud-sun"></i> Clima</a></li>
+      <li><a href="#currency"><i class="fas fa-dollar-sign"></i> Cotações</a></li>
+      <li><a href="#mmc"><i class="fas fa-calculator"></i> MMC</a></li>
+      <li><a href="#calc"><i class="fas fa-square-root-alt"></i> Calculadora</a></li>
+      <li><a href="#imc"><i class="fas fa-heartbeat"></i> IMC</a></li>
+      <li><a href="#iframe"><i class="fas fa-globe"></i> Sites</a></li>
+      <li><a href="#youtube"><i class="fab fa-youtube"></i> YouTube</a></li>
+    </ul>
+
+    <!-- Widgets -->
+    <div id="weather" class="widget">
+      <h5>Clima</h5>
+      <p id="weather-data">Carregando...</p>
+      <div id="forecast"></div>
+    </div>
+
+
+<div id="currency" class="widget">
+  <h5>💱 Cotações</h5>
+  <div class="currency-info">
+    <p>🇺🇸 USD: <span id="usd">Carregando...</span></p>
+    <p>🇪🇺 EUR: <span id="eur">Carregando...</span></p>
+    <p>🇬🇧 GBP: <span id="gbp">Carregando...</span></p>
+  </div>
+</div>
+
+    <div id="mmc" class="widget">
+      <h5>MMC</h5>
+      <input type="number" id="num1" placeholder="Número 1">
+      <input type="number" id="num2" placeholder="Número 2">
+      <button class="btn btn-gradient w-100" id="btn-mmc">Calcular MMC</button>
+      <p id="mmc-result"></p>
+    </div>
+
+    <div id="calc" class="widget">
+      <h5>Raiz Quadrada</h5>
+      <input type="number" id="calc-input" placeholder="Digite um número">
+      <button class="btn btn-gradient w-100" id="btn-calc">Calcular</button>
+      <p id="calc-result"></p>
+    </div>
+
+    <div id="imc" class="widget">
+      <h5>IMC</h5>
+      <input type="number" id="peso" placeholder="Peso (kg)">
+      <input type="number" step="0.01" id="altura" placeholder="Altura (m)">
+      <button class="btn btn-gradient w-100" id="btn-imc">Calcular IMC</button>
+      <p id="resultadoIMC"></p>
+
+      <!-- Accordion explicação -->
+      <div class="accordion mt-3" id="accordionIMC">
+        <div class="accordion-item bg-dark text-light">
+          <h2 class="accordion-header" id="headingIMC">
+            <button class="accordion-button collapsed bg-dark text-white" type="button" 
+              data-bs-toggle="collapse" data-bs-target="#collapseIMC" aria-expanded="false">
+              O que é IMC?
+            </button>
+          </h2>
+          <div id="collapseIMC" class="accordion-collapse collapse">
+            <div class="accordion-body text-light small">
+              IMC = peso (kg) ÷ altura² (m).<br>
+              <ul>
+                <li>18,5 → Baixo peso</li>
+                <li>18,5 – 24,9 → Peso adequado</li>
+                <li>25 – 29,9 → Sobrepeso</li>
+                <li>≥ 30 → Obesidade</li>
+              </ul>
+              <small>⚠️ Indicador geral, não substitui avaliação médica.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main class="main-content">
+    <!-- Se o usuário estiver autenticado, mostrar os posts -->
+      {% if user.is_authenticated %}
+      <section class="hero-section py-5">
+        <h1 class="display-7 text-gradient mb-3">Bem-vindo de volta, <span class="fw-bold">{{ user.username }}!!</span>!</h1>
+        <p class="display-9 text-primary fw-bold mb-1">Veja as novidades da sua rede!</p>
+      </section>
+        <div class="container">
+          <div class="row">
+            {% for post in posts|slice:":6" %}
+              <!-- duas colunas -->
+              <div class="col-md-6 mb-4"> 
+              <div class="card post-card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <!-- Exibir foto de perfil do autor se existir -->
+                    {% if post.autor.perfil.foto_perfil %}
+                    <a href="{% url 'perfil' post.autor.username %}" title="Ver Perfil de {{ post.autor.username  }}">
+                      <img src="{{ post.autor.perfil.foto_perfil.url }}" 
+                          alt="{{ post.autor.username }}" 
+                          class="align-items-center rounded-circle me-2 " 
+                          style="width: 40px; height: 40px; object-fit: cover;">
+                          {% else %}
+                            <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                          {% endif %}
+                     </a>
+                     <h5 class="mb-0">{{ post.autor.username }}</h5>
+                  </div>
+                  <p class="card-text">{{ post.conteudo }}</p>
+                      <hr class="my-2">
+                  <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted">
+                          <span class="like-count">{{ post.curtidas.count }}</span> curtidas
+                      </span>
+                      <span class="text-muted">
+                          {{ post.comentarios.count }} comentários
+                      </span>
+                  </div>
+                  <!-- Exibir imagem se existir -->
+                  {% if post.imagem %}
+                  <img src="{{ post.imagem.url }}" 
+                      class="img-fluid rounded post-img mt-3" 
+                      alt="Imagem da postagem de {{ post.autor.username }}"
+                      style="width: auto; height: 300px; display: block;
+                          margin: 1rem auto;
+                          border-radius: var(--border-radius);
+                          box-shadow: 0 0 15px rgba(119, 0, 255, 0.25);
+                          transition: transform 0.3s ease, box-shadow 0.4s ease;
+                              transform: scale(1.05);
+                          box-shadow: 0 0 25px rgba(0, 0, 0, 0.486);">
+                      <!-- Contagem de curtidas e comentários -->
+                  {% endif %}
+                </div>
+              </div>
+              </div>
+           
+            {% empty %}
+            <!-- Mensagem se não houver posts -->
+            <p class="text-muted">Nenhum post disponível ainda. Que tal ser o primeiro?</p>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <!-- Se o usuário não estiver autenticado, mostrar a seção de boas-vindas -->
+        <section class="hero-section py-5">
+          <h1 class="display-4 text-gradient mb-3">Bem-vindo à <span class="fw-bold">SocialNet</span>!</h1>
+          <p class="lead text-muted mb-4">Sua nova rede social com um toque moderno e amigável.</p>
+          <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-2">
+            <i class="fas fa-sign-in-alt"></i> Entrar
+          </a>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-2">
+            <i class="fas fa-user-plus"></i> Criar Conta
+          </a>
+        </section>
+      {% endif %}
+
+      <!-- Sites para acesso rapido sugerido-->
+      <div id="iframe" class="widget">
+        <h3>Sites Conhecidos</h3>
+        <div class="iframe-grid">
+          <iframe src="https://www.redepampa.com.br/radios/radio-continental-fm/" title="Rádio Continental FM"></iframe>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.730281983449!2d-46.66232528447466!3d-23.5800633684631!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8d32f6a9d%3A0x9c2a1e01c6cbb529!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1693000000000" title="Mapa Avenida Paulista"></iframe>
+          <iframe src="https://www.wikipedia.org" title="Wikipedia"></iframe>
+          <iframe src="https://g1.globo.com/" title="G1 Globo"></iframe>
+        </div>
+      </div>
+
+      <!-- YouTube -->
+      <div id="youtube" class="widget">
+        <div id="youtube-video"></div>
+        <h3>🎥 Vídeos do YouTube</h3>
+        <input type="text" id="youtube-url" placeholder="Cole a URL do vídeo">
+        <button class="btn btn-gradient w-100" id="btn-yt">Incorporar</button>
+      </div>
+
+      <!-- Lista de links e filmes  Relação de Links e Filmes Correspondentes-->
+    <div class="container my-5">
+      <h1 class="mb-4 text-center">🎬 Relação de Links e Filmes Correspondentes</h1>
+      
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=thfURRSQzdw" target="_blank">Gladiador 2 (trailer oficial)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=0LwUksasjrQ" target="_blank">Os Fantasmas Ainda se Divertem (Beetlejuice Beetlejuice)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=veD7iYjNSi4" target="_blank">Barbie</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=kEGlCYF5gaU" target="_blank">Oppenheimer</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=IK1sEiHodZg" target="_blank">Super Mario Bros – O Filme</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=dnBpZuSUISQ" target="_blank">John Wick 4: Baba Yaga</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=FR9iLjOubWc" target="_blank">Missão Impossível 7 – Acerto de Contas (Parte 1)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=v82etEmcf7o" target="_blank">Homem-Aranha: Através do Aranhaverso</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=7yCwv8FjidU" target="_blank">A Pequena Sereia (live-action)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=wAmkU6FEKUw" target="_blank">Pantera Negra: Wakanda Forever</a>
+        </li>
+
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=thfURRSQzdw" target="_blank" title="Gladiador 2">Gladiador 2 (trailer oficial)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=0LwUksasjrQ" target="_blank">Os Fantasmas Ainda se Divertem (Beetlejuice Beetlejuice)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=veD7iYjNSi4" target="_blank">Barbie</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=kEGlCYF5gaU" target="_blank">Oppenheimer</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=IK1sEiHodZg" target="_blank">Super Mario Bros – O Filme</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=dnBpZuSUISQ" target="_blank">John Wick 4: Baba Yaga</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=FR9iLjOubWc" target="_blank">Missão Impossível 7 – Acerto de Contas (Parte 1)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=v82etEmcf7o" target="_blank">Homem-Aranha: Através do Aranhaverso</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=7yCwv8FjidU" target="_blank">A Pequena Sereia (live-action)</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=wAmkU6FEKUw" target="_blank">Pantera Negra: Wakanda Forever</a>
+        </li>
+        <li class="list-group-item">
+          <a href="https://www.youtube.com/watch?v=thfURRSQzdw&pp=ygUTZ2xhZGlhZG9yIDIgdHJhaWxlcg%3D%3D" target="_blank">Gladiador 2 (trailer oficial) – Link com parâmetros adicionais</a>
+        </li>
+      </ul>
+    </div>
+  </main> 
+</div>
+<script src="{% static 'js/utilitario.js' %}"></script>
+{% endblock %}

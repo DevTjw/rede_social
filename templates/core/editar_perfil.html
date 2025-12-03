@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil - SocialNet{% endblock %}
+
+{% block content %}
+{% include "mensagens/flutuante.html" %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title text-center mb-0">Editar Perfil</h4>
+
+                <div class="mt-3 d-flex justify-content-center gap-3">
+
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'dados_pessoais' %}">
+                        <i class="bi bi-person-lines-fill"></i> Meus Dados Pessoais
+                    </a> 
+
+                    <a class="btn btn-sm btn-outline-info" href="{% url 'editar_dados_pagamento' %}">
+                        💳 Editar Pagamento
+                    </a>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="container text-center">
+
+                        <div class="row">
+                            <div class="col">
+                                Mudar Imagem 
+                                <div class="text-center mb-4">
+                                    <!-- Exibe a foto do perfil do usuário ou uma imagem padrão -->{% if user.perfil.foto_perfil %}
+                                    <img id="foto-perfil-preview" 
+                                        src="{{ user.perfil.foto_perfil.url }}" 
+                                        class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;" 
+                                        title="Clique para alterar foto"
+                                        onclick="document.getElementById('id_foto_perfil').click()">
+                                    {% else %}
+                                    
+                                    <i class="fas fa-user-circle fa-6x"></i>
+                                    {% endif %}
+                                    <div class="mt-2">
+                                        <!-- Botão para alterar foto, associado ao input de arquivo escondido -->
+                                        <label for="id_foto_perfil" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-camera"></i> Alterar foto
+                                        </label>
+
+                                        <!-- Campo de input de arquivo escondido, ele será acionado pelo clique na imagem -->
+                                        <input type="file" name="foto_perfil" id="id_foto_perfil" style="display: none;" accept="image/*">
+                                    </div>
+                                </div> 
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_first_name" class="form-label">Nome</label>
+                                {{ user_form.first_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_last_name" class="form-label">Sobrenome</label>
+                                {{ user_form.last_name }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Usuário</label>
+                        {{ user_form.username }}
+                    </div>
+                                        <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        {{ user_form.email }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_bio" class="form-label">Bio</label>
+                        {{ perfil_form.bio }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_localizacao" class="form-label">Localização</label>
+                                {{ perfil_form.localizacao }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_nascimento" class="form-label">Data de Nascimento</label>
+                                {{ perfil_form.nascimento }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        <a href="{% url 'perfil' user.username %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('id_foto_perfil').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('foto-perfil-preview').src = e.target.result; // Atualiza a imagem de pré-visualização
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+{% endblock %}

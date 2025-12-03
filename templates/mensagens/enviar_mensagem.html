@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<html lang="pt-br" data-theme="{{ request.session.theme|default:'claro' }}">
+<head>
+<style>
+    /* Variáveis de tema aprimoradas */
+    :root[data-theme="claro"] {
+      --bg-color: #ffffff34;
+      --text-color: #1a1a1a;
+      --card-bg: #f8f9fa;
+      --hover-bg: #e9ecef;
+      --border-color: #001c38;
+      --btn-primary-bg: #0d6efd;
+      --btn-primary-hover: #0b5ed7;
+      --btn-primary-color: #ffffff;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :root[data-theme="escuro"] {
+      --bg-color: #121212;
+      --text-color: #e9ecef;
+      --card-bg: #1e1e1e;
+      --hover-bg: #2d2d2d;
+      --border-color: #404040;
+      --btn-primary-bg: #0d6efd;
+      --btn-primary-hover: #3b82f6;
+      --btn-primary-color: #ffffff;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Container principal aprimorado */
+    .chat-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      transition: var(--transition);
+    }
+
+    /* Coluna esquerda com gradiente sutil */
+    .col-left {
+      width: 15%;
+      min-width: 100px;
+      background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
+      border-right: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    /* Área da mensagem aprimorada */
+    .area-mensagem {
+      flex: 1;
+      padding: 2.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      background-color: var(--bg-color);
+      overflow-y: auto;
+      transition: var(--transition);
+    }
+
+    .area-mensagem h3 {
+      margin-bottom: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      transition: var(--transition);
+    }
+
+    /* Formulário aprimorado */
+    form {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+
+    textarea, input[type="text"], input[type="hidden"] {
+      font-size: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      width: 100%;
+      resize: vertical;
+      min-height: 140px;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    textarea::placeholder {
+      color: color-mix(in srgb, var(--text-color) 40%, transparent);
+      transition: var(--transition);
+    }
+
+    textarea:focus, input:focus {
+      border-color: var(--btn-primary-bg);
+      outline: none;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn-primary-bg) 20%, transparent);
+      transform: translateY(-1px);
+    }
+
+    /* Botão aprimorado */
+    button.btn-enviar {
+      background: linear-gradient(135deg, var(--btn-primary-bg) 0%, var(--btn-primary-hover) 100%);
+      color: var(--btn-primary-color);
+      border: none;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button.btn-enviar:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--btn-primary-bg) 100%);
+    }
+
+    button.btn-enviar:not(:disabled):active {
+      transform: translateY(0);
+    }
+
+    button.btn-enviar:disabled {
+      background: color-mix(in srgb, var(--border-color) 60%, transparent);
+      color: color-mix(in srgb, var(--text-color) 40%, transparent);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Loading animation para botão */
+    button.btn-enviar.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    button.btn-enviar.loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top: 2px solid var(--btn-primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Sidebar de seguidores aprimorada */
+    .sidebar-seguidores {
+      width: 320px;
+      background: linear-gradient(180deg, var(--card-bg) 0%, var(--bg-color) 100%);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .sidebar-seguidores h4 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      color: var(--text-color);
+      font-size: 1.25rem;
+      transition: var(--transition);
+    }
+
+    /* Lista de seguidores aprimorada */
+    .seguidor-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid transparent;
+      background-color: var(--card-bg);
+      margin-bottom: 0.75rem;
+      box-shadow: var(--shadow);
+    }
+
+    .seguidor-item:hover {
+      background-color: var(--hover-bg);
+      border-color: color-mix(in srgb, var(--btn-primary-bg) 30%, transparent);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .seguidor-item.active {
+      background-color: var(--hover-bg);
+      border-color: var(--btn-primary-bg);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn-primary-bg) 20%, transparent);
+    }
+
+    .seguidor-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border-color);
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+
+    .seguidor-item:hover .seguidor-img {
+      border-color: var(--btn-primary-bg);
+      transform: scale(1.05);
+    }
+
+    .seguidor-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .seguidor-nome {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-color);
+      margin-bottom: 0.25rem;
+      transition: var(--transition);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .seguidor-username {
+      font-size: 0.875rem;
+      color: color-mix(in srgb, var(--text-color) 60%, transparent);
+      transition: var(--transition);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Estado vazio aprimorado */
+    .sidebar-seguidores .text-center {
+      color: color-mix(in srgb, var(--text-color) 50%, transparent);
+      font-style: italic;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    /* Scrollbar customizada */
+    .sidebar-seguidores::-webkit-scrollbar,
+    .area-mensagem::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-seguidores::-webkit-scrollbar-track,
+    .area-mensagem::-webkit-scrollbar-track {
+      background: var(--card-bg);
+    }
+
+    .sidebar-seguidores::-webkit-scrollbar-thumb,
+    .area-mensagem::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--border-color) 60%, transparent);
+      border-radius: 3px;
+    }
+
+    .sidebar-seguidores::-webkit-scrollbar-thumb:hover,
+    .area-mensagem::-webkit-scrollbar-thumb:hover {
+      background: var(--btn-primary-bg);
+    }
+
+    /* Responsividade aprimorada */
+    @media (max-width: 1024px) {
+      .col-left {
+        width: 80px;
+        min-width: 80px;
+      }
+      
+      .sidebar-seguidores {
+        width: 280px;
+      }
+      
+      .area-mensagem {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .col-left {
+        display: none;
+      }
+      
+      .sidebar-seguidores {
+        width: 100%;
+        height: 180px;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 1rem;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        gap: 1rem;
+      }
+      
+      .seguidor-item {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 0.75rem;
+        min-width: 120px;
+        margin-bottom: 0;
+        text-align: center;
+      }
+      
+      .seguidor-img {
+        width: 48px;
+        height: 48px;
+      }
+      
+      .seguidor-info {
+        text-align: center;
+      }
+      
+      .seguidor-nome {
+        font-size: 0.875rem;
+      }
+      
+      .seguidor-username {
+        font-size: 0.75rem;
+      }
+      
+      .area-mensagem {
+        padding: 1.5rem 1rem 2rem;
+      }
+      
+      textarea, input[type="text"], input[type="hidden"] {
+        min-height: 120px;
+        padding: 0.875rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .area-mensagem h3 {
+        font-size: 1.25rem;
+        text-align: center;
+      }
+      
+      .sidebar-seguidores {
+        height: 160px;
+        padding: 0.75rem;
+      }
+      
+      .seguidor-item {
+        min-width: 100px;
+        padding: 0.75rem 0.5rem;
+      }
+      
+      .seguidor-img {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    /* Animações de entrada */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .seguidor-item {
+      animation: fadeInUp 0.5s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .seguidor-item:nth-child(odd) {
+      animation-delay: 0.1s;
+    }
+
+    .seguidor-item:nth-child(even) {
+      animation-delay: 0.2s;
+    }
+</style>
+</head>
+
+
+  <div class="chat-container">
+    <!-- Coluna esquerda vazia -->
+     
+    <div class="col-left"></div>
+
+    <!-- Área central de mensagem -->
+    <main class="area-mensagem">
+      <h3>Enviar mensagem para <span id="nome-destinatario">...</span></h3>
+
+      <form method="post" id="form-mensagem" novalidate>
+        {% csrf_token %}
+        {{ form.destinatario }} {# campo hidden #}
+
+        <label for="id_conteudo" class="form-label">Mensagem</label>
+        {{ form.conteudo }}
+
+        <button type="submit" class="btn-enviar" disabled id="btn-enviar">Enviar Mensagem</button>
+      </form>
+    </main>
+
+    <!-- Sidebar direita: seguidores -->
+    <aside class="sidebar-seguidores">
+      <h4>Seus Seguidores</h4><br>
+      {% if seguidores %}
+        {% for seguidor in seguidores %}
+          <div class="seguidor-item" data-username="{{ seguidor.username }}" data-nome="{{ seguidor.get_full_name|default:seguidor.username }}">
+            {% if seguidor.perfil.foto_perfil %}
+              <img src="{{ seguidor.perfil.foto_perfil.url }}" alt="{{ seguidor.username }}" class="seguidor-img" />
+            {% else %}
+              <i class="fas fa-user-circle fa-2x text-secondary"></i>
+            {% endif %}
+            <div>
+              <div class="seguidor-nome">{{ seguidor.get_full_name|default:seguidor.username }}</div>
+              <div class="seguidor-username">@{{ seguidor.username }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center">Nenhum seguidor para mostrar.</p>
+      {% endif %}
+    </aside>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function(){
+      let destinatarioSelecionado = null;
+
+      function selecionarSeguidor($item){
+        $('.seguidor-item').removeClass('active');
+        $item.addClass('active');
+
+        const username = $item.data('username');
+        const nome = $item.data('nome');
+
+        destinatarioSelecionado = username;
+        $('#nome-destinatario').text(nome);
+        $('#id_destinatario').val(username);
+
+        toggleBotaoEnviar();
+      }
+
+      function toggleBotaoEnviar(){
+        const mensagem = $('#id_conteudo').val().trim();
+        $('#btn-enviar').prop('disabled', !destinatarioSelecionado || mensagem.length === 0);
+      }
+
+      $('.seguidor-item').on('click', function(){
+        selecionarSeguidor($(this));
+      });
+
+      $('#id_conteudo').on('input', toggleBotaoEnviar);
+
+      $('#form-mensagem').on('submit', function(e){
+        const mensagem = $('#id_conteudo').val().trim();
+        if(!destinatarioSelecionado){
+          alert('Selecione um destinatário clicando na lista de seguidores.');
+          e.preventDefault();
+          return;
+        }
+        if(mensagem.length === 0){
+          $('#id_conteudo').addClass('is-invalid').focus();
+          e.preventDefault();
+        } else {
+          $('#id_conteudo').removeClass('is-invalid');
+        }
+      });
+
+      // Seleciona o primeiro seguidor automaticamente, se houver
+      const $primeiroSeguidor = $('.seguidor-item').first();
+      if ($primeiroSeguidor.length) {
+        selecionarSeguidor($primeiroSeguidor);
+      }
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Nova Senha{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="container mt-5">
+                        {% if valido %}
+                        <h3>Digite sua nova senha</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                        <!-- NOVA SENHA -->
+                        <div class="input-group mb-2">
+                            <input 
+                                type="password" 
+                                name="senha1" 
+                                class="form-control" 
+                                placeholder="Nova senha" 
+                                id="senha1"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-secondary" 
+                                id="toggleSenha1"
+                            >
+                                <i id="iconSenha1" class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <!-- CONFIRMAR NOVA SENHA -->
+                        <div class="input-group mb-3">
+                            <input 
+                                type="password" 
+                                name="senha2" 
+                                class="form-control" 
+                                placeholder="Confirme a nova senha" 
+                                id="senha2"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-secondary"
+                                id="toggleSenha2"
+                            >
+                                <i id="iconSenha2" class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                            <button type="submit" class="btn btn-success">Redefinir Senha</button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-danger">
+                            Link inválido ou expirado.
+                        </div>
+                        {% endif %}
+                    </div>
+
+
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login' %}">Lembrei a senha!</a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p>Não tem uma conta? <a href="{% url 'register' %}">Cadastre-se</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                document.querySelectorAll('.alert').forEach(function (alertElement) {
+                    var alert = bootstrap.Alert.getOrCreateInstance(alertElement);
+                    alert.close();
+                });
+            }, 7000); // 7 segundos
+        });
+    </script>
+<script>
+function setupPasswordToggle(inputId, iconId, buttonId) {
+    document.getElementById(buttonId).addEventListener("click", function () {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("bi-eye", "bi-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.replace("bi-eye-slash", "bi-eye");
+        }
+    });
+}
+
+// Aplicando para os dois campos
+setupPasswordToggle("senha1", "iconSenha1", "toggleSenha1");
+setupPasswordToggle("senha2", "iconSenha2", "toggleSenha2");
+</script>
+
+    {% endblock %}

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ========== RESET E BASE ========== */
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.payment-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.payment-container {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 40px 50px;
+  transition: all 0.4s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+/* Tema Claro */
+[data-bs-theme="light"] .payment-container {
+  background: rgba(212, 212, 212, 0.95);
+  box-shadow: 0 0 25px rgba(13, 110, 253, 0.15);
+}
+
+/* Tema Escuro */
+[data-bs-theme="dark"] .payment-container {
+  background: rgba(48, 63, 94, 0.623);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+}
+
+/* ========== TÍTULO ========== */
+.payment-container h2 {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 35px;
+}
+
+[data-bs-theme="light"] .payment-container h2 {
+  color: #007bff;
+}
+
+[data-bs-theme="dark"] .payment-container h2 {
+  color: #00e5ff;
+}
+
+/* ========== CAMPOS ========== */
+.payment-form label {
+  font-weight: 300;
+  margin-top: 8px;
+}
+
+.payment-form input,
+.payment-form select {
+  background: rgba(10, 15, 25, 0.8);
+  border-radius: 12px !important;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: 0.3s ease;
+  width: 100%;
+}
+
+
+[data-bs-theme="light"]
+.payment-form input,
+.payment-form select {
+  background: rgba(144, 144, 145, 0.8);
+  border-radius: 12px !important;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: 0.3s ease;
+  width: 100%;
+  color: #000000;
+}
+
+[data-bs-theme="dark"] 
+.payment-form input,
+.payment-form select {
+  background: rgba(10, 15, 25, 0.5);
+  border-radius: 12px !important;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: 0.3s ease;
+  width: 100%;
+  color: #ffffff;
+}
+
+
+.payment-form input:focus,
+.payment-form select:focus {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+/* ========== BOTÃO MODERNO ========== */
+.btn-modern {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 0;
+  margin-top: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+/* Cores vibrantes */
+[data-bs-theme="light"] .btn-modern {
+  background: linear-gradient(90deg, #007bff, #00d4ff);
+  color: #fff;
+}
+[data-bs-theme="light"] .btn-modern:hover {
+  background: linear-gradient(90deg, #00d4ff, #007bff);
+  transform: scale(1.03);
+}
+
+[data-bs-theme="dark"] .btn-modern {
+  background: linear-gradient(90deg, #00e5ff, #007bff);
+  color: #000;
+}
+[data-bs-theme="dark"] .btn-modern:hover {
+  background: linear-gradient(90deg, #007bff, #00e5ff);
+  box-shadow: 0 0 15px #00ffff;
+  transform: scale(1.03);
+}
+
+/* ========== BOTÃO VOLTAR ========== */
+.btn-voltar {
+  display: inline-block;
+  text-align: center;
+  margin-top: 25px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+[data-bs-theme="light"] .btn-voltar {
+  color: #007bff;
+}
+[data-bs-theme="light"] .btn-voltar:hover {
+  color: #000;
+}
+
+[data-bs-theme="dark"] .btn-voltar {
+  color: #00e5ff;
+}
+[data-bs-theme="dark"] .btn-voltar:hover {
+  color: #fff;
+}
+
+/* ========== ANIMAÇÃO ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<div class="payment-wrapper">
+  <div class="payment-container">
+    <h2><i class="fa-solid fa-credit-card me-2"></i>Editar Informações de Pagamento</h2>
+
+    <form method="post" class="payment-form">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="id_metodo_pagamento" class="form-label">Método de Pagamento</label>
+        {{ form.metodo_pagamento }}
+      </div>
+
+      <div id="cartaoFields">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_nome_titular" class="form-label">Nome do Titular</label>
+            {{ form.nome_titular }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_bandeira" class="form-label">Bandeira</label>
+            {{ form.bandeira }}
+          </div>
+        </div>
+
+        <label for="id_numero_cartao" class="form-label">Número do Cartão</label>
+        {{ form.numero_cartao }}
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_validade" class="form-label">Validade (MM/AA)</label>
+            {{ form.validade }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_codigo_seguranca" class="form-label">CVV</label>
+            {{ form.codigo_seguranca }}
+          </div>
+        </div>
+      </div>
+
+      <div id="pixField" style="display:none;">
+        <label for="id_chave_pix" class="form-label">Chave Pix</label>
+        {{ form.chave_pix }}
+      </div>
+
+      <button type="submit" class="btn-modern">
+        <i class="fa-solid fa-floppy-disk me-2"></i>Salvar
+      </button>
+    </form>
+
+    <div class="text-center">
+    <a class="dropdown-item ajax-link btn-voltar" href="{% url 'editar_perfil' %}" data-ajax="true">
+    <i class="fas fa-edit"></i> ← Voltar ao Perfil</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Alterna exibição de campos conforme método de pagamento */
+document.addEventListener("DOMContentLoaded", function () {
+  const metodoSelect = document.getElementById("id_metodo_pagamento");
+  const cartaoFields = document.getElementById("cartaoFields");
+  const pixField = document.getElementById("pixField");
+
+  function toggleFields() {
+    const metodo = metodoSelect.value;
+    if (metodo === "pix") {
+      cartaoFields.style.display = "none";
+      pixField.style.display = "block";
+    } else {
+      cartaoFields.style.display = "block";
+      pixField.style.display = "none";
+    }
+  }
+
+  metodoSelect.addEventListener("change", toggleFields);
+  toggleFields();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Windows Menu</title>
+    <meta name="description" content="A sophisticated, futuristic menu styled like Windows with vibrant colors, responsive design, and light/dark mode integration.">
+    <meta name="keywords" content="menu, windows style, futuristic, responsive, dark mode">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        vibrant1: "#ff6b6b",
+                        vibrant2: "#4ecdc4",
+                        vibrant3: "#45b7d1",
+                        vibrant4: "#f9ca24",
+                        vibrant5: "#6c5ce7",
+                        vibrant6: "#fd79a8"
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(255, 107, 107, 0.5)' },
+                            '100%': { boxShadow: '0 0 30px rgba(255, 107, 107, 0.8)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .window-glass {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .window-glass {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .window-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .dark .window-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 dark:from-gray-900 dark:via-purple-900 dark:to-black transition-all duration-500">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="max-w-6xl w-full">
+            <!-- Dark Mode Toggle -->
+            <div class="flex justify-end mb-4">
+                <button id="theme-toggle" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-float">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline"></i>
+                    Toggle Theme
+                </button>
+            </div>
+
+            <!-- Menu Windows Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Window 1 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant1 to-vibrant2 rounded-t-lg p-2 text-white font-bold text-center">App 1</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=1" alt="Futuristic app interface with glowing elements" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Explore innovative features in this futuristic app.</p>
+                        <button class="mt-4 bg-vibrant1 hover:bg-vibrant2 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app1')">Open</button>
+                    </div>
+                </div>
+
+                <!-- Window 2 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant3 to-vibrant4 rounded-t-lg p-2 text-white font-bold text-center">App 2</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=2" alt="Cyberpunk cityscape with neon lights" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Dive into a world of cyberpunk adventures.</p>
+                        <button class="mt-4 bg-vibrant3 hover:bg-vibrant4 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app2')">Open</button>
+                    </div>
+                </div>
+
+                <!-- Window 3 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant5 to-vibrant6 rounded-t-lg p-2 text-white font-bold text-center">App 3</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=3" alt="Abstract futuristic data visualization" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Analyze data with cutting-edge visualizations.</p>
+                        <button class="mt-4 bg-vibrant5 hover:bg-vibrant6 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app3')">Open</button>
+                    </div>
+                </div>
+
+                <!-- Window 4 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant2 to-vibrant3 rounded-t-lg p-2 text-white font-bold text-center">App 4</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=4" alt="Space exploration interface with planets" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Embark on interstellar journeys.</p>
+                        <button class="mt-4 bg-vibrant2 hover:bg-vibrant3 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app4')">Open</button>
+                    </div>
+                </div>
+
+                <!-- Window 5 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant4 to-vibrant5 rounded-t-lg p-2 text-white font-bold text-center">App 5</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=5" alt="AI robot assistant in a modern lab" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Interact with your AI companion.</p>
+                        <button class="mt-4 bg-vibrant4 hover:bg-vibrant5 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app5')">Open</button>
+                    </div>
+                </div>
+
+                <!-- Window 6 -->
+                <div class="window-glass window-shadow rounded-lg p-4 hover:scale-105 transition-transform duration-300 animate-glow">
+                    <div class="bg-gradient-to-br from-vibrant6 to-vibrant1 rounded-t-lg p-2 text-white font-bold text-center">App 6</div>
+                    <div class="p-4">
+                        <img src="https://picsum.photos/300/200?random=6" alt="Virtual reality headset with immersive graphics" class="w-full h-32 object-cover rounded-lg mb-4" loading="lazy">
+                        <p class="text-gray-800 dark:text-gray-200 text-sm">Enter virtual worlds like never before.</p>
+                        <button class="mt-4 bg-vibrant6 hover:bg-vibrant1 text-white px-4 py-2 rounded-lg transition-colors duration-300 w-full" onclick="navigateTo('app6')">Open</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define data at the beginning
+        const menuItems = [
+            { "id": "app1", "title": "App 1", "description": "Explore innovative features in this futuristic app." },
+            { "id": "app2", "title": "App 2", "description": "Dive into a world of cyberpunk adventures." },
+            { "id": "app3", "title": "App 3", "description": "Analyze data with cutting-edge visualizations." },
+            { "id": "app4", "title": "App 4", "description": "Embark on interstellar journeys." },
+            { "id": "app5", "title": "App 5", "description": "Interact with your AI companion." },
+            { "id": "app6", "title": "App 6", "description": "Enter virtual worlds like never before." }
+        ];
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        }
+
+        // Navigation function (prevents default behavior as required)
+        function navigateTo(appId) {
+            event.preventDefault();
+            // Simulate navigation - in a real app, this would redirect or load content
+            alert(`Navigating to ${appId}. This is a placeholder for actual navigation.`);
+            // For demonstration, you could use window.location.href or similar
+        }
+
+        // Add some canvas animation for futuristic effect (optional)
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.zIndex = '-1';
+        canvas.style.pointerEvents = 'none';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function createParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                size: Math.random() * 2 + 1,
+                color: `hsl(${Math.random() * 360}, 70%, 50%)`
+            };
+        }
+
+        for (let i = 0; i < 50; i++) {
+            particles.push(createParticle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+
+                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Responsive canvas resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

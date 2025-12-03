@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Confirme seu email</title>
+
+    <style>
+        /* Modo claro padrão */
+        :root {
+            color-scheme: light dark;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f3f3f3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #222;
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+            color: #fff;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .content {
+            padding: 32px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .button-area {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background-color: #4a00e0;
+            color: #fff !important;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-block;
+            transition: 0.25s;
+        }
+
+        .btn:hover {
+            background-color: #3b00b8;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding: 18px;
+            background: #efefef;
+        }
+
+        /* =============================== */
+        /*            MODO ESCURO          */
+        /* =============================== */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #0f0f0f !important;
+                color: #e0e0e0 !important;
+            }
+
+            .card {
+                background: #1a1a1a !important;
+                box-shadow: 0 0 25px rgba(0, 0, 0, 0.45);
+            }
+
+            .content {
+                color: #d5d5d5 !important;
+            }
+
+            .footer {
+                background: #111 !important;
+                color: #666 !important;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="header">
+        <h1>Bem-vindo à SocialNet!</h1>
+    </div>
+
+    <div class="content">
+        <p>Olá <strong>{{ username }}</strong>,</p>
+
+        <p>Obrigado por se registrar! Clique no botão abaixo para confirmar seu email e ativar sua conta:</p>
+
+        <div class="button-area">
+            <a href="{{ confirm_url }}" class="btn">Ativar minha conta</a>
+        </div>
+
+        <p style="font-size:14px; color:#888;">
+            Se você não criou uma conta, ignore este email.
+        </p>
+    </div>
+
+    <div class="footer">
+        SocialNet © 2025 — Todos os direitos reservados.
+    </div>
+
+</div>
+
+</body>
+</html>

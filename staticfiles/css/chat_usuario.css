@@ -1,0 +1,217 @@
+/* ======== BASE ======== */
+.chat-wrapper {
+  max-width: auto;
+  background: var(--bs-body-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 0;
+  color: var(--bs-body-color);
+}
+
+/* ======== CABEÇALHO ======== */
+.chat-header {
+  position: relative;
+  background: linear-gradient(135deg, #007bff, #00a6ff);
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  border-radius: 16px 16px 0 0;
+}
+
+.chat-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.chat-header .voltar {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.4rem;
+  transition: opacity 0.2s ease;
+}
+
+.chat-header .voltar:hover {
+  opacity: 0.8;
+}
+
+/* ======== CHAT BOX ======== */
+#chat-box {
+  height: auto;
+  overflow-y: auto;
+  background-color: var(--chat-bg, #f5f7fb);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+.mensagem {
+  max-width: 75%;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.25s ease;
+}
+
+.mensagem.recebida {
+  align-self: flex-start;
+  text-align: left;
+}
+
+.mensagem.enviada {
+  align-self: flex-end;
+  text-align: right;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ======== BOLHAS DE CONVERSA ======== */
+.conteudo {
+  border-radius: 18px;
+  padding: 10px 16px;
+  display: inline-block;
+  word-wrap: break-word;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
+}
+
+/* 💬 Mensagem ENVIADA (remetente) — gradiente vibrante animado */
+.conteudo.bg-primary {
+  background: linear-gradient(135deg, #007bff, #00a6ff, #00c6ff);
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+  border-top-right-radius: 4px;
+  color: #fff !important;
+  box-shadow: 0 0 10px rgba(0, 166, 255, 0.3);
+}
+
+/* 💬 Mensagem RECEBIDA — azul acinzentado com leve gradiente */
+.conteudo.bg-light {
+  background: linear-gradient(145deg, #ffffff, #eef3fa);
+  border: 1px solid #dee2e6;
+  border-top-left-radius: 4px;
+  color: #212529;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.08);
+}
+
+.conteudo:hover {
+  transform: scale(1.02);
+}
+
+/* Gradiente animado (usado nas enviadas e recebidas, se desejar) */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ======== METADADOS ======== */
+.mensagem small {
+  font-size: 0.75rem;
+  color: var(--bs-secondary-color, #888) !important;
+  margin-top: 4px;
+}
+
+.editar-msg {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.editar-msg:hover {
+  opacity: 1;
+}
+
+/* ======== INPUT ======== */
+#form-chat {
+  border-top: 1px solid var(--bs-border-color, #e0e0e0);
+  padding: 12px 15px;
+  background: var(--bs-body-bg);
+}
+
+#mensagem-input {
+  border-radius: 20px;
+  padding: 10px 16px;
+  background-color: var(--bs-tertiary-bg, #f8faff);
+  border: 1px solid var(--bs-border-color, #ccd2e0);
+  color: var(--bs-body-color);
+}
+
+#mensagem-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem #007bff20;
+  background-color: var(--bs-body-bg);
+}
+
+.btn-primary {
+  border-radius: 20px;
+  padding: 0 20px;
+}
+
+/* ======== MODO ESCURO ======== */
+[data-bs-theme="dark"] .chat-wrapper {
+  background: #1e1f22;
+  color: #e9ecef;
+}
+
+[data-bs-theme="dark"] #chat-box {
+  background-color: #2a2d31;
+}
+
+/* 💬 RECEBIDA no escuro — cinza/azul futurista */
+[data-bs-theme="dark"] .conteudo.bg-light {
+  background: linear-gradient(135deg, #2f3338, #3b4046);
+  border-color: #44484f !important;
+  color: #e9ecef !important;
+  box-shadow: 0 0 8px rgba(0, 195, 255, 0.05);
+}
+
+/* 💬 ENVIADA no escuro — azul neon vibrante */
+[data-bs-theme="dark"] .conteudo.bg-primary {
+  background: linear-gradient(135deg, #0d6efd, #1ea1ff, #00c6ff) !important;
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+  box-shadow: 0 0 15px rgba(30, 162, 255, 0.4);
+}
+
+/* ======== INPUT ESCURO ======== */
+[data-bs-theme="dark"] #mensagem-input {
+  background-color: #2a2d31;
+  border-color: #44484f;
+  color: #fff;
+}
+
+[data-bs-theme="dark"] #mensagem-input:focus {
+  border-color: #36a2ff;
+  box-shadow: 0 0 0 0.2rem #36a2ff30;
+}
+
+[data-bs-theme="dark"] #form-chat {
+  border-top-color: #3a3d42;
+}
+
+/* ======== MOBILE ======== */
+@media (max-width: 576px) {
+  .chat-wrapper {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  #chat-box {
+    height: 70vh;
+    padding: 10px;
+  }
+  .chat-title {
+    font-size: 1.1rem;
+  }
+  .chat-header .voltar {
+    font-size: 1.2rem;
+  }
+}

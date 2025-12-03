@@ -1,0 +1,367 @@
+
+/* Dashboard futurista */
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    position: relative;
+}
+
+/* Sidebar padrão (desktop) */
+.sidebar {
+    background: rgba(48, 48, 48, 0.9);
+    color: #fff;
+    padding: 1.5rem;
+    width: 280px;
+    transition: transform 0.3s ease-in-out;
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    box-shadow: var(--shadow-lg), var(--glow);
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite linear;
+    z-index: 0;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* Sidebar oculta no mobile */
+.sidebar.hidden {
+    transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 80%;
+    max-width: 320px;
+}
+
+/* Cabeçalho da sidebar */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-header h3 {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-menu li {
+    margin: 12px 0;
+}
+
+.sidebar-menu a {
+    color: #fff;
+    text-decoration: none;
+    transition: var(--transition);
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+}
+
+.sidebar-menu a:hover {
+    background: rgba(0, 217, 255, 0.2);
+    color: var(--accent-color);
+    transform: translateX(5px);
+}
+
+/* Conteúdo principal */
+.main-content {
+    flex: 1;
+    padding-top: 1rem;
+    position: relative;
+}
+
+/* Widgets e cards */
+.widget {
+    background: rgba(48, 48, 48, 0.9);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.widget:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(0, 217, 255, 0.5);
+}
+
+.widget h5 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+    padding-bottom: 0.5rem;
+}
+
+.post-card {
+    background: rgba(48, 48, 48, 0.9);
+    color: #fff;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.post-card:hover {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    transform: translateY(-5px);
+}
+
+/* Grid responsiva */
+.iframe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.iframe-grid iframe {
+    width: 100%;
+    height: 300px;
+    border: 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.iframe-grid iframe:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+}
+
+/* Botões */
+.btn-gradient {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(45deg, var(--accent-secondary), var(--accent-color));
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: var(--transition);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+/* Botão do menu (hamburger) */
+.menu-toggle {
+    display: none;
+    background: var(--accent-color);
+    color: #000;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 1100;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.menu-toggle:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.1);
+}
+
+.currency-info p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--accent-color);
+    font-weight: bold;
+    transition: var(--transition);
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.currency-info p:hover {
+    color: var(--accent-secondary);
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hero section */
+.hero-section {
+    padding: 4rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    z-index: -1;
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+/* Accordion customizado */
+.accordion-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    border-radius: var(--border-radius) !important;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.accordion-button {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background: rgba(0, 217, 255, 0.2);
+    color: var(--accent-color);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: var(--accent-color);
+}
+
+/* --------- RESPONSIVIDADE --------- */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+    }
+    
+    .dashboard {
+        display: block;
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        transform: translateX(-100%);
+        z-index: 1050;
+        width: 100%;
+        max-width: 320px;
+        touch-action: pan-y;
+        /* ... seus estilos existentes ... */
+        overflow-y: auto;              /* permite rolagem vertical */
+        -webkit-overflow-scrolling: touch; /* rolagem suave em iOS */
+
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+    
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        transform: translateX(-100%);
+        z-index: 1050;
+        width: 80%;
+        max-width: 320px;
+        touch-action: pan-y;
+        /* ... seus estilos existentes ... */
+        overflow-y: auto;              /* permite rolagem vertical */
+        -webkit-overflow-scrolling: touch; /* rolagem suave em iOS */
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        padding-top: 70px;
+    }
+    
+    .hero-section {
+        padding: 2rem 0;
+    }
+    
+    .iframe-grid {
+        grid-template-columns: 1fr;
+    }
+}

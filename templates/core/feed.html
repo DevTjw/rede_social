@@ -1,0 +1,732 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <title>{% block title %}SocialNet{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/feed.css' %}">
+</head>
+{% include "mensagens/flutuante.html" %}
+<div class="row">
+
+    <!-- =======================
+         COLUNA PRINCIPAL (POSTS)
+    ======================== -->
+    <div class="col-md-7">
+
+        <!-- Card para criar novo post -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <!-- Foto do usuário logado -->
+                    {% if user.perfil.foto_perfil %}
+                    <img src="{{ user.perfil.foto_perfil.url }}" class="profile-pic-sm "
+                        style="width: 35px; height: 35px; border-radius: 50%;"
+                        title="{{ user.get_full_name|default:user.username }}">
+                    {% else %}
+                    <!-- Ícone padrão se não houver foto -->
+                    <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                    {% endif %}&nbsp;&nbsp;
+                    <!-- Formulário para criar post -->
+                    <div class="w-100">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <textarea name="conteudo" class="form-control mb-2" placeholder="O que você está pensando?"
+                                rows="3"></textarea>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <!-- Botão para adicionar imagem -->
+                                    <label for="imagem" class="btn btn-sm btn-outline-secondary mb-0">
+                                        <i class="fas fa-image"></i> Foto
+                                    </label>
+                                    <input type="file" name="imagem" id="imagem" class="d-none" accept="image/*">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Publicar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- =======================
+             LISTA DE POSTS EXISTENTES
+        ======================== -->
+        {% for post in posts|slice:":5" %}
+        <div class="card post-card">
+            <div class="card-body">
+
+                <!-- Cabeçalho do post (autor, tempo e ações) -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex">
+                        <!-- Foto do autor -->
+                        {% if post.autor.perfil.foto_perfil %}
+                        <img src="{{ post.autor.perfil.foto_perfil.url }}" alt="{{ post.autor.username }}"
+                            style="width: 35px; height: 35px; border-radius: 50%;" class="profile-pic-sm ">
+                        {% else %}
+                        <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                        {% endif %}&nbsp;&nbsp;
+                        <div title="">
+                            <h5 class="card-title mb-0">
+                                <a href="{% url 'perfil' post.autor.username %}" class="text-decoration-none">
+                                    {{ post.autor.get_full_name|default:post.autor.username }}
+                                </a>
+                            </h5>
+                            <small class="text-muted">{{ post.data_criacao|timesince }} atrás</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo do post -->
+                <p class="card-text">{{ post.conteudo }}</p>
+
+                <!-- Imagem do post (se existir) -->
+                {% if post.imagem %}
+                <img src="{{ post.imagem.url }}" class="img-fluid rounded mb-3" alt="Imagem do post"
+                    title="Publicado por {{ post.autor.username }}">
+                {% endif %}
+
+                <!-- Contagem de curtidas e comentários -->
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">
+                        <span class="like-count">{{ post.curtidas.count }}</span> curtidas
+                    </span>
+                    <span class="text-muted">{{ post.comentarios.count }} comentários</span>
+                </div>
+
+                <hr>
+
+                <!-- Botões de interação -->
+                <div class="d-flex justify-content-around">
+                    <!-- botão Curtir  -->
+                    <button
+                        class="btn btn-sm btn-outline-primary like-btn {% if user in post.curtidas.all %}liked{% endif %}"
+                        data-post-id="{{ post.id }}" data-like-url="{% url 'core:curtir_post' post.id %}">
+                        <i class="{% if user in post.curtidas.all %}fas text-danger{% else %}far{% endif %} fa-heart"></i>
+                        Curtidas<span class="like-count">{{ post.curtidas.count }}</span>
+                    </button>&nbsp;
+
+                    <!-- botão Deletar (apenas para o autor do post) -->
+                    {% if post.autor.perfil.foto_perfil == user.perfil.foto_perfil %}
+                    <form action="{% url 'core:deletar_post' post.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Tem certeza que quer deletar este post?');"
+                            class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-trash"></i> Del
+                        </button>
+                    </form>&nbsp;
+                    {% else %}
+
+                    {% endif %}
+                    <!-- Botão para comentar  abre comentarios -->
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
+                        data-bs-target="#comments-{{ post.id }}" aria-expanded="false"
+                        aria-controls="comments-{{ post.id }}">
+                        <i class="far fa-comment"></i> Comentar
+                    </button>&nbsp;
+
+                    <!-- Compartilhar -->
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="far fa-share-square"></i> Compartilhar
+                    </button>
+
+                </div>
+                <!-- =======================
+                     ÁREA DE COMENTÁRIOS
+                ======================== -->
+                <div class="collapse mt-3" id="comments-{{ post.id }}">
+                    <div class="comments-container"></div>
+                    <div id="mensagem-status"></div>
+                    <hr>
+                    <!-- Formulário para adicionar novo comentário -->
+                    <div id="comentarios-{{ post.id }}">
+                        <form method="post" class="comment-form" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="Comente algo..." required></textarea>
+                                <button type="submit" class="btn btn-primary">Comentar</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                    <hr>
+                    <!-- Lista dos 5 ultimos comentários -->
+                    {% for comentario in post.comentarios.all|dictsortreversed:"data_criacao"|slice:":5" %}
+
+                    <div class="card mb-2 comentario " data-id="{{ comentario.id }}">
+                        <div class="card-body py-2">
+                            <div class="d-flex">
+                                {% if comentario.autor.perfil.foto_perfil %}
+                                <img src="{{ comentario.autor.perfil.foto_perfil.url}}" class="profile-pic-sm me-2"
+                                    style="width: 35px; height: 35px; border-radius: 50%;"
+                                    title="{{ comentario.autor.get_full_name|default:comentario.autor.username }}">
+                                {% else %}
+                                <!-- Ícone padrão se não houver foto -->
+                                <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ comentario.autor.username }}</strong>
+                                    <p class="mb-0 comentario-texto">{{ comentario.texto }}</p>
+                                    <small class="text-muted">{{ comentario.data_criacao|timesince }} atrás</small>
+
+                                    <!-- Botões de editar/excluir (somente autor ou staff) -->
+                                    {% if comentario.autor == request.user or request.user.is_staff %}
+                                    <!-- Botão para abrir o Modal -->
+                                    <button type="button" class="btn btn-sm btn-link text-primary p-0 editar-comentario"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditarComentario"
+                                        data-comentario-id="{{ comentario.id }}"
+                                        data-comentario-texto="{{ comentario.texto|escape }}">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-link text-primary excluir-comentario-btn"
+                                        data-comentario-id="{{ comentario.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <!-- Botão para abrir o Modal com todos os comentários -->
+                    {% if post.comentarios.count > 5 %}
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-outline-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#modalTodosComentarios-{{ post.id }}">
+                            Ver todos os comentários
+                        </button>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <!-- =======================
+    MODAL COM TODOS COMENTÁRIOS
+======================= -->
+        <div class="modal fade" id="modalTodosComentarios-{{ post.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Todos os comentários</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        {% for comentario in post.comentarios.all|dictsort:"data_criacao" %}
+                        <div class="card mb-2 comentario" data-id="{{ comentario.id }}">
+                            <div class="card-body py-2">
+                                <div class="d-flex">
+
+                                    {% if comentario.autor.perfil.foto_perfil %}
+                                    <img src="{{ comentario.autor.perfil.foto_perfil.url}}" class="profile-pic-sm me-2"
+                                        style="width: 35px; height: 35px; border-radius: 50%;"
+                                        title="{{ comentario.autor.get_full_name|default:comentario.autor.username }}">
+                                    {% else %}
+                                    <!-- Ícone padrão se não houver foto -->
+                                    <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ comentario.autor.username }}</strong>
+                                        <p class="mb-0 comentario-texto">{{ comentario.texto }}</p>
+
+                                        <!-- Botões de editar/excluir (somente autor ou staff) -->
+                                        {% if comentario.autor == request.user or request.user.is_staff %}
+                                        <!-- Botão para abrir o Modal -->
+                                        <button type="button"
+                                            class="btn btn-sm btn-link text-primary p-0 editar-comentario"
+                                            data-bs-toggle="modal" data-bs-target="#modalEditarComentario"
+                                            data-comentario-id="{{ comentario.id }}"
+                                            data-comentario-texto="{{ comentario.texto|escape }}">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+
+                                        <button class="btn btn-sm btn-link text-primary excluir-comentario-btn"
+                                            data-comentario-id="{{ comentario.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+
+                                        {% endif %}
+
+                                        <small class="text-muted">{{ comentario.data_criacao|timesince }} atrás</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">Nenhum comentário ainda.</p>
+                        {% endfor %}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Caso não existam posts -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                <h5>Nenhum post ainda</h5>
+                <p class="text-muted">Quando você seguir pessoas ou criar posts, eles aparecerão aqui.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- =======================
+         COLUNA LATERAL DIREITA
+    ======================== -->
+<div class="col-md-5">
+    <div class="card sidebar">
+        <div class="card-body">
+            <h4 class="mb-4">Sugestão de quem seguir</h4>
+            <div id="sugestoes-container" class="d-flex flex-wrap gap-3">
+                {% for usuario in sugestoes %}
+                <div class="usuario-sugestao card p-3" data-username="{{ usuario.username }}">
+
+                    {% if usuario.perfil.foto_perfil %}
+                    <img src="{{ usuario.perfil.foto_perfil.url }}" alt="{{ usuario.username }}"
+                        style="width: 35px; height: 35px; border-radius: 50%;"
+                        class="rounded-circle mx-auto d-block mb-2">
+                    {% else %}
+                    <i class="fas fa-user-circle fa-2x  me-2"></i>
+                    {% endif %}
+
+                    <p class="fw-bold mb-3">{{ usuario.username }}</p>
+
+                    <button class="seguir-btn btn btn-primary w-100">
+                        {% if usuario.ja_segue %}
+                        Não seguir
+                        {% else %}
+                        Seguir
+                        {% endif %}
+                    </button>
+                </div>
+                {% empty %}
+                <p class="text-muted">Nenhuma sugestão disponível.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- =======================
+      Modal de Edição
+      Editar comentário usando Modal Bootstrap já feito anteriormente
+ ======================== -->
+<div class="modal fade" id="modalEditarComentario" tabindex="-1" aria-labelledby="modalEditarComentarioLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarComentarioLabel">Editar Comentário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-editar-comentario">
+                    <input type="hidden" id="editar-id" name="comentario-id">
+                    <div class="mb-3">
+                        <label for="editar-texto" class="form-label">Texto do Comentário</label>
+                        <textarea class="form-control" id="editar-texto" name="texto" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------____________fim do html________________________--------------->
+
+<!-- ======================
+jQuery (menu retrátil)
+Adicione este script no final da página (depois de carregar jQuery e Bootstrap):
+===========================-->
+<script>
+$(document).ready(function() {
+    /* adiciona botão flutuante se não existir */
+    if (!$('#btn-toggle-sidebar').length) {
+        $('body').append('<button id="btn-toggle-sidebar" title="Sugestões"><i class="fas fa-user-friends"></i></button>');
+    }
+
+    /* alternar sidebar */
+    $('#btn-toggle-sidebar').on('click', function() {
+        $('.sidebar').toggleClass('active');
+        const icon = $(this).find('i');
+        icon.toggleClass('fa-user-friends fa-times'); /* muda ícone */
+    });
+
+    /* fechar ao clicar fora */
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.sidebar, #btn-toggle-sidebar').length) {
+            $('.sidebar').removeClass('active');
+            $('#btn-toggle-sidebar i').removeClass('fa-times').addClass('fa-user-friends');
+        }
+    });
+});
+</script>
+
+<!------jQuery para dar feedback visual bonito ao curtir/comentar, sem alterar classes:-->
+
+<script>
+/* Exemplo de animação rápida ao curtir */
+$(document).on('click', '.like-btn', function() {
+    const btn = $(this);
+    const heart = $('<canvas>').css({
+        position: 'absolute',
+        pointerEvents: 'none',
+        top: btn.offset().top,
+        left: btn.offset().left,
+        width: 50,
+        height: 50,
+        zIndex: 9999
+    }).appendTo('body');
+
+    const ctx = heart[0].getContext('2d');
+    let opacity = 1, scale = 1;
+
+    const anim = setInterval(() => {
+        ctx.clearRect(0, 0, 50, 50);
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = "#dc3545";
+        ctx.beginPath();
+        ctx.moveTo(25, 15);
+        ctx.bezierCurveTo(25, 5, 40, 5, 40, 20);
+        ctx.bezierCurveTo(40, 35, 25, 45, 25, 45);
+        ctx.bezierCurveTo(25, 45, 10, 35, 10, 20);
+        ctx.bezierCurveTo(10, 5, 25, 5, 25, 15);
+        ctx.fill();
+        opacity -= 0.05;
+        scale += 0.02;
+        heart.css('transform', `scale(${scale})`);
+        if (opacity <= 0) {
+            clearInterval(anim);
+            heart.remove();
+        }
+    }, 30);
+});
+
+</script>
+
+<!-- =======================
+     SCRIPT: Adicionar novo comentário via AJAX
+========================--> 
+<script>
+    document.querySelectorAll('form[data-post-id]').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); /* Impede recarregamento da página */
+
+            const postId = this.dataset.postId;
+            const texto = this.querySelector('input[name="texto"]').value;
+            const csrfToken = '{{ csrf_token }}';
+
+            /* Requisição AJAX para adicionar comentário */
+            fetch(`/post/${postId}/comentar/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ texto })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    /* Insere o novo comentário no DOM */
+                    const container = document.querySelector(`#comentarios-${postId}`);
+                    const novo = document.createElement('div');
+                    novo.className = 'card mb-2';
+                    novo.innerHTML = `
+                        <div class="card-body py-2">
+                            <strong>${data.autor}:</strong> ${data.texto}<br>
+                            <small class="text-muted">${data.data_criacao}</small>
+                        </div>
+                    `;
+                    container.appendChild(novo);
+                    form.reset(); /* Limpa campo de texto */
+                }
+            });
+        });
+    });
+</script>
+
+<!-- =======================
+     SCRIPT: Editar comentário usando Modal Bootstrap já feito anteriormente
+========================-->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modalEl = document.getElementById('modalEditarComentario');
+    const form = document.getElementById('form-editar-comentario');
+    const inputId = document.getElementById('editar-id');
+    const textarea = document.getElementById('editar-texto');
+    const modal = new bootstrap.Modal(modalEl);
+
+    /* Preenche o modal com os dados do comentário selecionado*/
+    document.querySelectorAll('.editar-comentario').forEach(botao => {
+        botao.addEventListener('click', () => {
+            inputId.value = botao.dataset.comentarioId;
+            textarea.value = botao.dataset.comentarioTexto;
+        });
+    });
+
+    /* Envia o formulário do modal*/
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const comentarioId = inputId.value;
+        const novoTexto = textarea.value;
+
+        fetch(`/core/comentario/${comentarioId}/editar/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `texto=${encodeURIComponent(novoTexto)}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const card = document.querySelector(`.comentario[data-id='${comentarioId}']`);
+                card.querySelector('.comentario-texto').textContent = data.texto;
+                modal.hide();
+            } else {
+                alert(data.error || 'Erro ao editar comentário.');
+            }
+        });
+    });
+});
+</script>
+
+<!-- =======================
+ SCRIPT: Seguir/Deixar de seguir usuários via AJAX
+ ======================= 
+ Função para obter o token CSRF do cookie-->
+<script>
+function getCookie(name) {  
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+           /*Verifica se este cookie corresponde ao nome desejado */ 
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    
+/*Seguir usuários */ 
+/* Adiciona event listener a todos os botões de seguir */
+
+document.querySelectorAll('.follow-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const username = this.dataset.username;
+        const followCount = document.querySelector('.follower-count');
+        
+        fetch(`/usuarios/seguir/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            if (data.seguindo) {
+                this.innerHTML = 'Cancelar';
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-secondary');
+            } else {
+                this.innerHTML = 'Seguir';
+                this.classList.remove('btn-secondary');
+                this.classList.add('btn-primary');
+            }
+            
+            /* Atualizar contador de seguidores */
+            if (followCount) {
+                const currentCount = parseInt(followCount.textContent);
+                followCount.textContent = data.seguindo ? currentCount + 1 : currentCount - 1;
+            }
+        });
+    });
+});
+    
+/* Comentários
+Adiciona event listener a todos os formulários de comentário
+Adiciona event listener a todos os formulários de comentário */
+document.querySelectorAll('.comment-form').forEach(form => {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const postId = this.dataset.postId;
+        const textarea = this.querySelector('textarea');
+        const commentText = textarea.value.trim();
+
+        if (!commentText) return;
+
+        const commentsContainer = this.closest('.post-card')?.querySelector('.comments-container');
+
+        fetch(`/core/post/${postId}/comentar/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ texto: commentText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const newComment = document.createElement('div');
+                newComment.className = 'comment mb-2';
+                newComment.innerHTML = `
+                    <div class="d-flex">
+                        ${data.foto_perfil
+                            ? `<img src="${data.foto_perfil}" class="profile-pic-sm me-2" alt="${data.autor}">`
+                            : `<i class="fas fa-user-circle fa-2x text-secondary me-2"></i>`}
+                        <div>
+                            <strong>${data.autor}</strong>
+                            <p class="mb-0">${data.texto}</p>
+                            <small class="text-muted">${data.data_criacao}</small>
+                        </div>
+                    </div>
+                `;
+
+                if (commentsContainer) {
+                    commentsContainer.appendChild(newComment);
+                }
+
+                textarea.value = '';
+            } else {
+                alert(data.error || 'Erro ao adicionar comentário');
+            }
+        })
+        .catch(err => {
+            console.error('Erro ao enviar comentário:', err);
+        });
+    });
+});
+
+</script>
+
+<!-- =======================
+     SCRIPT: Excluir comentário via AJAX
+     Função para mostrar mensagens temporárias
+========================-->
+<script>
+function mostrarMensagem(texto, tipo = 'sucesso') {
+    let msgDiv = document.getElementById('mensagem-status');
+    if (!msgDiv) {
+        /* Cria o container se não existir */
+        msgDiv = document.createElement('div');
+        msgDiv.id = 'mensagem-status';
+        msgDiv.style.position = 'fixed';
+        msgDiv.style.top = '10px';
+        msgDiv.style.right = '10px';
+        msgDiv.style.zIndex = '9999';
+        msgDiv.style.padding = '10px 20px';
+        msgDiv.style.borderRadius = '5px';
+        msgDiv.style.color = 'white';
+        msgDiv.style.display = 'none';
+        document.body.appendChild(msgDiv);
+    }
+
+    msgDiv.textContent = texto;
+
+    if (tipo === 'sucesso') {
+        msgDiv.style.backgroundColor = '#28a745'; 
+    } else if (tipo === 'erro') {
+        msgDiv.style.backgroundColor = '#dc3545'; 
+    } else {
+        msgDiv.style.backgroundColor = '#6c757d'; 
+    }
+
+    msgDiv.style.display = 'block';
+
+    /*  Esconde após 3 segundos */
+    setTimeout(() => {
+        msgDiv.style.display = 'none';
+    }, 3000);
+}
+
+async function excluirComentario(comentarioId, btn) {
+    const url = `/core/comentario/${comentarioId}/excluir/`;
+    const csrftoken = getCookie('csrftoken');
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            const comentarioDiv = btn.closest('.comentario');
+            if (comentarioDiv) comentarioDiv.remove();
+            mostrarMensagem('Comentário excluído com sucesso!', 'sucesso');
+        } else {
+            mostrarMensagem(data.error || 'Erro ao excluir comentário', 'erro');
+        }
+    } catch (error) {
+        console.error('Erro na exclusão do comentário:', error);
+        mostrarMensagem('Erro na conexão. Tente novamente.', 'erro');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+    }
+}
+
+document.addEventListener('click', function(event) {
+    const btn = event.target.closest('.excluir-comentario-btn');
+    if (!btn) return;
+
+    event.preventDefault();
+
+    const comentarioId = btn.dataset.comentarioId;
+    if (!comentarioId) {
+        console.error('ID do comentário não encontrado no botão');
+        return;
+    }
+
+    if (confirm('Tem certeza que deseja excluir este comentário?')) {
+        excluirComentario(comentarioId, btn);
+    }
+});
+
+</script>
+
+{% endblock %}

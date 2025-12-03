@@ -1,0 +1,12 @@
+<!-- templates/administrativo/cadastro/cadastro_sucesso.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4 text-center">Cadastro Realizado com Sucesso!</h2>
+    <p class="text-center">O usuário foi cadastrado corretamente. Agora você pode fazer login.</p>
+    <div class="text-center">
+        <a href="{% url 'usuarios:login_usuario' %}" class="btn btn-primary">Ir para Login</a>
+    </div>
+</div>
+{% endblock %}

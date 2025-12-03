@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>👥 Usuários disponíveis</h2>
+
+<style>
+    .usuario-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        background: #f8f8f8;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<ul>
+{% for user in usuarios %}
+    <li class="usuario-item">
+        <span>{{ user.username }}</span>
+
+        <a href="{% url 'mensagens:chat' destinatario_username=user.username %}"
+           class="btn-chat">
+            💬 Conversar
+        </a>
+    </li>
+{% empty %}
+    <p>Nenhum usuário encontrado.</p>
+{% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu Futurista</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== ESTILO BASE ===== */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top left, #8ae2ff, #fafbfc, #8ae2ff);
+      transition: background 0.5s ease;
+      font-family: "Segoe UI", sans-serif;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    /* ===== NAVBAR FUTURISTA ===== */
+    .glass-navbar {
+      background: rgba(0, 0, 0, 0.4) !important;
+      backdrop-filter: blur(15px) saturate(180%);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand.neon-text {
+      color: #00ffff !important;
+      text-shadow: 0 0 8px #00ffff, 0 0 15px #0088ff;
+      letter-spacing: 1px;
+      transition: 0.3s ease;
+    }
+
+    .navbar-brand.neon-text:hover {
+      color: #ff00ff !important;
+      text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff0088;
+    }
+
+    .nav-link {
+      color: #d0faff !important;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #00ffff !important;
+      text-shadow: 0 0 6px #00ffff;
+    }
+
+    .dropdown-glass {
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+      animation: dropdownFade 0.3s ease;
+    }
+
+
+    @keyframes dropdownFade {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-pic-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Tema escuro */
+    [data-bs-theme="dark"] body {
+      background-color: var(--dark-bg);
+      color: #e2e8f0;
+      background-image: linear-gradient(to bottom right, #0a0a1a, #0f172a);
+    }
+
+    [data-bs-theme="dark"] .navbar {
+      background: rgba(0, 0, 0, 0.616) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-md);
+      border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+    }
+
+    [data-bs-theme="dark"] .card {
+      background-color: var(--dark-card);
+      border: 1px solid rgba(0, 217, 255, 0.15);
+      color: #e2e8f0;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(5px);
+    }
+
+    [data-bs-theme="dark"] .form-control {
+      background-color: rgba(26, 36, 56, 0.7);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      color: #e2e8f0;
+      transition: var(--transition);
+    }
+
+    [data-bs-theme="dark"] .form-control:focus {
+      background-color: rgba(26, 36, 56, 0.9);
+      border-color: var(--accent-color);
+      color: #e2e8f0;
+      box-shadow: 0 0 0 0.25rem rgba(0, 217, 255, 0.25);
+    }
+
+    [data-bs-theme="dark"] .dropdown-menu {
+      background-color: rgba(30, 30, 60, 0.95);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    [data-bs-theme="dark"] .dropdown-item {
+      color: #e2e8f0;
+      transition: var(--transition);
+    }
+
+    [data-bs-theme="dark"] .dropdown-item:hover {
+      background-color: rgba(0, 217, 255, 0.15);
+      color: var(--accent-color);
+    }
+
+
+    /* ===== CONTAINER DO MENU ===== */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 25px;
+      max-width: 600px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px) saturate(160%);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.25);
+      animation: fadeIn 1s ease forwards;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== ITEM DO MENU ===== */
+    .menu-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(145deg, #ffffff, #1c1c1c);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+      background: linear-gradient(145deg, #00ffff22, #ff00ff22);
+    }
+
+    .menu-item img {
+      max-width: 65%;
+      max-height: 65%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px #00ffff);
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .menu-item:hover img {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 10px #ff00ff);
+    }
+
+    .menu-title {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.95rem;
+      color: #00ffff;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* ===== ANIMAÇÕES ===== */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 600px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+
+      .menu-title {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* ===== LINKS ===== */
+    .menu-item a {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+    }
+
+    /* ===== TEMA ESCURO ===== */
+    [data-bs-theme="dark"] body {
+      background: radial-gradient(circle at bottom right, #000, #111, #1a1a1a);
+    }
+
+    [data-bs-theme="dark"] .menu-grid {
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.15);
+    }
+
+    [data-bs-theme="dark"] .menu-item {
+      background: linear-gradient(145deg, #1b1b1b, #2a2a2a);
+    }
+
+    [data-bs-theme="dark"] .menu-item img {
+      filter: drop-shadow(0 0 6px #ffffff);
+    }
+  </style>
+</head>
+
+<body>
+    <!-- ===== NAVBAR FUTURISTA ===== -->
+  <nav class="navbar navbar-expand-lg navbar-dark glass-navbar fixed-top px-3 py-2">
+    <div class="container-fluid">
+
+      <!-- Botão de alternar tema claro/escuro -->
+      <button onclick="toggleTheme()" type="button" class="btn btn-outline-light btn-sm me-2 rounded-circle btn-theme"
+        title="Alterar tema">
+        🌓
+      </button>
+
+      <!-- Logo -->
+      <a class="navbar-brand fw-bold neon-text ajax-link" href="{% url 'core:feed' %}" data-ajax="true">
+        <i class="fa-solid fa-bolt-lightning me-1"></i> SocialNet
+      </a>
+
+      <!-- Botão menu mobile -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+
+        <!-- Esquerda -->
+        <div class="navbar-nav me-auto">
+          <a class="nav-link ajax-link" href="{% url 'core:home' %}" data-ajax="true">
+            <i class="fas fa-house-user me-1"></i> Home
+          </a>
+
+          {% if user.is_authenticated %}
+          <a class="nav-link ajax-link" href="{% url 'core:feed' %}" data-ajax="true">
+            <i class="fas fa-rss me-1"></i> Feed
+          </a>
+          <a class="nav-link ajax-link" href="{% url 'core:feed_sugestoes' %}" data-ajax="true">
+            <i class="fas fa-user-plus me-1"></i> Seguir
+          </a>
+          <a class="nav-link ajax-link" href="{% url 'buscar_usuarios' %}" data-ajax="true">
+            <i class="fas fa-search me-1"></i> Buscar
+          </a>
+          <a class="nav-link ajax-link" href="{% url 'perfil' user.username %}" data-ajax="true">
+            <i class="fas fa-user-circle me-1"></i> Meu Perfil
+          </a>
+          {% endif %}
+        </div>
+
+        <!-- Direita -->
+        <!-- Links da direita (login/logout/perfil) -->
+        <div class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+          <!-- -->
+          <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-bs-toggle="dropdown">
+              {% if total_nao_lidas > 0 %}
+              <span class="badge bg-danger badge-counter">{{ total_nao_lidas }}</span>
+              {% endif %}
+              <i class="fas fa-envelope fa-fw"></i>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
+              <h6 class="dropdown-header">Mensagens</h6>
+
+              {% for conversa in conversas_dropdown %}
+              <a class="dropdown-item d-flex align-items-center"
+                href="{% url 'mensagens:conversa' conversa.outro_username %}">
+                <div class="me-3 dropdown-list-image">
+                  <img class="profile-pic-sm me-2" src="{{ conversa.foto_perfil_url }}" alt="Avatar">
+                </div>
+                <div class="fw-bold">
+                  <div class="text-truncate">Última mensagem</div>
+                  <div class="small text-gray-500">
+                    {{ conversa.outro_username }} — {{ conversa.ultima_data|timesince }} atrás
+                    {% if conversa.nao_lidas > 0 %}
+                    <span class="badge bg-primary ms-1">{{ conversa.nao_lidas }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </a>
+              {% empty %}
+              <span class="dropdown-item text-muted small">Sem mensagens</span>
+              {% endfor %}
+
+              <div class="dropdown-divider"></div>
+
+              <a class="dropdown-item text-center small text-gray-500" href="{% url 'mensagens:caixa_entrada' %}">
+                Ver todas as mensagens
+              </a>
+            </div>
+          </li>
+          <!-- -->
+          <!-- Dropdown do usuário logado -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
+              data-bs-toggle="dropdown">
+              <!-- Foto de perfil ou imagem padrão -->
+              {% if user.perfil.foto_perfil %}
+              <img src="{{ user.perfil.foto_perfil.url }}" class="profile-pic-sm me-2" title="Foto de perfil">
+              {% else %}
+              <!-- Ícone padrão se não houver foto -->
+              <i class="fas fa-user-circle fa-lg text-light me-2" title="Foto de perfil padrão"></i>
+              {% endif %}
+              {{ user.username }}
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 animate__animated animate__fadeIn">
+
+              <!-- Cabeçalho do menu -->
+              <li class="dropdown-header py-2 border-bottom dropdown-header text-muted small text-uppercase">
+                {% if user.perfil.foto_perfil %}
+                <img src="{{ user.perfil.foto_perfil.url }}" class="profile-pic-sm me-2" title="Foto de perfil">
+                {% else %}
+                <!-- Ícone padrão se não houver foto -->
+                <i class="fas fa-user-circle fa-lg text-light me-2" title="Foto de perfil padrão"></i>
+                {% endif %} {{ user.get_full_name|default:user.username }}
+              </li>
+
+              <!-- Mensagens -->
+              <li class="dropdown-header text-muted small text-uppercase">Minha areá</li>
+              <!-- Perfil -->
+              <li>
+                <a class="dropdown-item ajax-link d-flex align-items-center" href="{% url 'perfil' user.username %}"
+                  data-ajax="true">
+                  <i class="fas fa-user me-2 text-secondary"></i> Meu Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item ajax-link d-flex align-items-center" href="{% url 'editar_perfil' %}"
+                  data-ajax="true">
+                  <i class="fas fa-user-edit me-2 text-secondary"></i> Editar Perfil
+                </a>
+              </li>
+
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+
+              <!-- Mensagens -->
+              <li class="dropdown-header text-muted small text-uppercase">Mensagens</li>
+              <li>
+                <a class="dropdown-item ajax-link d-flex align-items-center" href="{% url 'mensagens:caixa_entrada' %}">
+                  <i class="fas fa-inbox me-2 text-secondary"></i> Caixa de Entrada
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item ajax-link d-flex align-items-center"
+                  href="{% url 'mensagens:enviar_mensagem_geral' %}">
+                  <i class="fas fa-paper-plane me-2 text-secondary"></i> Enviar Mensagem
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <!-- Logout -->
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                    <i class="fas fa-sign-out-alt me-2"></i> Sair
+                  </button>
+                </form>
+              </li>
+            </ul>
+
+          </div>
+          {% else %}
+          <!-- Usuário não logado: exibe opções de login e registro -->
+          <a class="nav-link ajax-link" href="{% url 'login' %}" data-ajax="true">Entrar</a>
+          <a class="nav-link ajax-link" href="{% url 'register' %}" data-ajax="true">Cadastrar</a>
+
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  {% if user.is_authenticated %}
+  {% include "mensagens/flutuante.html" %}
+  {% else %}
+  {% endif %}
+
+  <!-- Menu principal -->
+  <div class="menu-grid">
+    <div class="menu-item">
+      <a href="/core/"></a>
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="App 1" />
+      <div class="menu-title">Rede Social</div>
+    </div>
+
+
+<!--  -->
+    {% if user.is_authenticated %}
+    
+    <div class="menu-item">
+      <a href="/core/feed/"></a>
+      <img src="https://cdn-icons-png.flaticon.com/128/15493/15493927.png" alt="App 2" />
+      <div class="menu-title">Feed</div>
+    </div>
+    <div class="menu-item">
+      <a href="/mensagens/"></a>
+      <img src="https://cdn-icons-png.flaticon.com/128/8361/8361261.png" alt="App 3" />
+      <div class="menu-title">Mensagens</div>
+    </div>
+
+    {% else %}    
+    <div class="menu-item">
+      <a href="/usuarios/login/"></a>
+      <img src="https://cdn-icons-png.flaticon.com/128/1828/1828466.png" alt="App 3" />
+      <div class="menu-title">Login</div>
+    </div>
+    <div class="menu-item">
+      <a href="/usuarios/register/"></a>
+      <img src="https://cdn-icons-png.flaticon.com/128/8521/8521787.png" alt="App 4" />
+      <div class="menu-title">Registrar</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    // Alternância de tema claro/escuro
+    function toggleTheme() {
+      const htmlElement = document.documentElement;
+      const currentTheme = htmlElement.getAttribute('data-bs-theme');
+      const themeIcon = document.getElementById('themeIcon');
+
+      if (currentTheme === 'dark') {
+        htmlElement.setAttribute('data-bs-theme', 'light');
+        themeIcon.classList.remove('bi-brightness-high-fill');
+        themeIcon.classList.add('bi-moon-fill');
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlElement.setAttribute('data-bs-theme', 'dark');
+        themeIcon.classList.remove('bi-moon-fill');
+        themeIcon.classList.add('bi-brightness-high-fill');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+
+    $(document).ready(function () {
+      const html = $("html");
+      $(".menu-item").on("click", function () {
+        const title = $(this).find(".menu-title").text();
+        console.log("Abrindo " + title + "...");
+      });
+    });
+  </script>
+</body>
+
+</html>

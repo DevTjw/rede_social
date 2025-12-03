@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+    /* ========= BASE ========= */
+    body {
+    font-family: "Poppins", sans-serif;
+    }
+
+    .personal-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    padding: 20px;
+    background: var(--bs-body-bg);
+    }
+
+    /* ========= CONTAINER PRINCIPAL ========= */
+    .futuristic-card {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    transition: all 0.4s ease;
+    animation: fadeIn 0.6s ease;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+    }
+
+    /* Tema claro */
+    [data-bs-theme="light"] .futuristic-card {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 25px rgba(13, 110, 253, 0.15);
+    }
+
+    /* Tema escuro */
+    [data-bs-theme="dark"] .futuristic-card {
+    background: rgba(15, 20, 35, 0.8);
+    box-shadow: 0 0 35px rgba(0, 255, 255, 0.15);
+    }
+
+    /* ========= TÍTULO ========= */
+    .futuristic-title {
+    text-align: center;
+    font-weight: 700;
+        font-size: 1.8rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 30px;
+        }
+
+        [data-bs-theme="light"] .futuristic-title {
+        color: #007bff;
+        }
+
+        [data-bs-theme="dark"] .futuristic-title {
+        color: #00e5ff;
+        }
+
+        /* ========= CAMPOS ========= */
+        .form-label {
+        font-weight: 500;
+        }
+
+        .form-control {
+        border-radius: 12px !important;
+        padding: 12px 16px;
+        transition: 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .form-control:focus {
+        border-color: #00e5ff !important;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+        }
+
+        /* ========= BOTÃO PRINCIPAL ========= */
+        .futuristic-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 0;
+        margin-top: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        width: 100%;
+        }
+
+        /* Cores vibrantes */
+        [data-bs-theme="light"] .futuristic-btn {
+        background: linear-gradient(90deg, #007bff, #00d4ff);
+        color: #fff;
+        }
+        [data-bs-theme="light"] .futuristic-btn:hover {
+        background: linear-gradient(90deg, #00d4ff, #007bff);
+        transform: scale(1.03);
+        }
+
+        [data-bs-theme="dark"] .futuristic-btn {
+        background: linear-gradient(90deg, #00ffff, #007bff);
+        color: #000;
+        }
+        [data-bs-theme="dark"] .futuristic-btn:hover {
+        box-shadow: 0 0 15px #00ffff;
+        transform: scale(1.03);
+        }
+
+        /* ========= BOTÃO VOLTAR ========= */
+        .btn-back {
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        margin-top: 15px;
+        font-weight: 500;
+        border-radius: 12px;
+        padding: 14px 0;
+        transition: all 0.3s ease;
+        }
+
+        [data-bs-theme="light"] .btn-back {
+        background: linear-gradient(90deg, #6c757d, #adb5bd);
+        color: #fff;
+        }
+        [data-bs-theme="light"] .btn-back:hover {
+        background: linear-gradient(90deg, #adb5bd, #6c757d);
+        transform: scale(1.03);
+        }
+
+        [data-bs-theme="dark"] .btn-back {
+        background: linear-gradient(90deg, #555, #333);
+        color: #fff;
+        }
+        [data-bs-theme="dark"] .btn-back:hover {
+        background: linear-gradient(90deg, #333, #555);
+        box-shadow: 0 0 10px #00e5ff;
+        transform: scale(1.03);
+        }
+
+        /* ========= ANIMAÇÃO ========= */
+        @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+
+<div class="personal-wrapper">
+  <div class="card shadow-lg p-5 rounded-4 border-0 futuristic-card">
+    <h2 class="futuristic-title"><i class="fa-solid fa-user me-2"></i>Dados Pessoais</h2>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-4">
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <div class="invalid-feedback d-block">
+              {{ field.errors|striptags }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn futuristic-btn">
+        <i class="fa-solid fa-floppy-disk me-2"></i>Salvar Dados
+      </button>
+    </form>
+
+    <a class="btn btn-back" href="{% url 'editar_perfil' %}">
+      <i class="fa-solid fa-arrow-left me-2"></i>Voltar ao Perfil
+    </a>
+  </div>
+</div>
+{% endblock %}

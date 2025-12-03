@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+  <style>
+/* ==========================
+   BASE VISUAL E TIPOGRAFIA
+========================== */
+:root {
+  --transition: 0.3s ease;
+  --radius: 12px;
+  --accent: #00c6ff;
+  --accent-dark: #0094d9;
+}
+
+body.light-mode {
+  --bg: #f4f6fa;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text: #1b1d20;
+  --muted: #6c757d;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --accent-glow: 0 0 10px rgba(0, 198, 255, 0.25);
+}
+
+body.dark-mode {
+  --bg: #0d1117;
+  --card-bg: rgba(36, 39, 46, 0.7);
+  --text: #e6edf3;
+  --muted: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 3px 14px rgba(0, 0, 0, 0.5);
+  --accent-glow: 0 0 12px rgba(0, 198, 255, 0.4);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-size: 16px;
+  transition: all var(--transition);
+}
+
+/* ==========================
+   CARTÕES DE USUÁRIOS
+========================== */
+#sugestoes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.usuario-sugestao {
+  width: 220px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+
+.usuario-sugestao:hover {
+  transform: scale(1.03);
+  box-shadow: var(--accent-glow);
+}
+
+.usuario-sugestao img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  object-fit: cover;
+  transition: all var(--transition);
+}
+
+.usuario-sugestao img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 198, 255, 0.4);
+}
+
+.usuario-sugestao p {
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+/* ==========================
+   BOTÃO DE SEGUIR
+========================== */
+.seguir-btn {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+}
+
+.seguir-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--accent-glow);
+}
+
+/* ==========================
+   MODO RESPONSIVO
+========================== */
+@media (max-width: 991px) {
+  body {
+    font-size: 15px;
+  }
+
+  .usuario-sugestao {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    padding: 0.8rem 1rem;
+    gap: 0.6rem;
+    border-radius: 10px;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+  }
+
+  .usuario-sugestao img {
+    width: 50px;
+    height: 50px;
+    border-width: 1.5px;
+  }
+
+  .usuario-sugestao p {
+    flex: 1;
+    margin-left: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .seguir-btn {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
+
+/* ==========================
+   MINI AJUSTES PARA TELAS MUITO PEQUENAS
+========================== */
+@media (max-width: 480px) {
+  .usuario-sugestao img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .usuario-sugestao p {
+    font-size: 0.85rem;
+  }
+
+  .seguir-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}
+
+  </style>
+</head>
+
+{% include "mensagens/flutuante.html" %}
+<h2 class="mb-4">Quem seguir</h2>
+
+<div id="sugestoes-container" class="d-flex flex-wrap gap-3">
+  {% for usuario in sugestoes %}
+  <div class="usuario-sugestao card p-3" data-username="{{ usuario.username }}"
+    style="width: 200px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 10px;">
+    <a href="{% url 'perfil' usuario %}" title="Ver Perfil de {{ usuario.username }}">
+      {% if usuario.perfil.foto_perfil %}
+      <img src="{{ usuario.perfil.foto_perfil.url }}" alt="{{ usuario.username }}" title="{{ usuario.username }}"
+      class="rounded-circle mx-auto d-block mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+      {% else %}
+      <i class="fas fa-user-circle fa-4x text-secondary me-2"></i>
+      {% endif %}
+
+      <p class="fw-bold mb-3">{{ usuario.username }}</p>
+    </a>
+    <h5 class="card-title mb-0">
+      <button class="seguir-btn btn btn-primary">
+        {% if usuario.ja_segue %}
+        Cancelar
+        {% else %}
+        Seguir
+        {% endif %}
+      </button>
+
+  </div>
+  {% empty %}
+  <p class="text-muted">Nenhuma sugestão disponível.</p>
+  {% endfor %}
+</div>
+<hr>
+{% endblock %}

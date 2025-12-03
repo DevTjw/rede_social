@@ -1,0 +1,428 @@
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        
+        /* ------------------------------------------- */
+        /*Botão de Toggle o chama  Menu (Discreto) */
+        /* ------------------------------------------- */
+        #menuToggle {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            z-index: 1001; 
+            
+            /* Novo estilo discreto */
+            background: rgba(28, 121, 0, 0.582); /* Semitransparente */
+            backdrop-filter: blur(5px); /* Efeito de vidro (opcional, mas legal!) */
+            border: 1px solid rgb(255, 255, 255); /* Borda suave */
+            color: white;
+            
+            width: 25px; /* Menor */
+            height: 60px; /* Menor */
+            font-size: 10px; /* Menor ícone */
+            cursor: pointer;
+            border-radius: 5px 0 0 5px; 
+            box-shadow: -2px 0 5px rgba(0, 129, 15, 0.2); /* Sombra mais suave */
+            transition: all 0.4s ease; /* Transição para todas as propriedades */
+            writing-mode: horizontal-tb; /* Volta ao normal para ícone simples */
+            line-height: 60px; /* Centraliza verticalmente o ícone */
+            text-align: center;
+            padding: 0;
+            display: block;
+        }
+
+        #menuToggle:hover {
+            background: rgba(0, 129, 11, 0.918);
+        }
+        
+        /* Quando o menu está aberto, move o botão para o novo tamanho */
+        .menu-open #menuToggle {
+            right: 220px; /* Largura do menu lateral (280px) */
+            background: #00a824; /* Fica ativo */
+            box-shadow: -4px 0 15px rgb(39, 14, 33);
+        }
+
+        /* ------------------------------------------- */
+        /* MELHORIA: Estrutura do Menu Lateral (Discreto) */
+        /* ------------------------------------------- */
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.158); /* Overlay mais suave */
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease, visibility 0.4s;
+            z-index: 1000;
+        }
+
+        .side-menu-content {
+            position: fixed;
+            top: 0;
+            right: -300px; 
+            width: 220px;
+            height: 100%;
+            background: rgba(104, 219, 104, 0.418); /* Levemente transparente */
+            backdrop-filter: blur(10px); /* Efeito de vidro no menu (opcional) */
+            box-shadow: -6px 0 15px rgba(0, 0, 0, 0.5);
+            transition: right 0.4s ease;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        /* As classes .active e .menu-open funcionam como antes */
+        .side-menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .side-menu-overlay.active .side-menu-content {
+            right: 0;
+        }
+
+        /* Títulos e controles dentro do menu lateral */
+        .menu-header {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        
+   
+        
+        /* Controles dos Widgets (Dentro do Menu Lateral) */
+        .widget-controls {
+            display: flex;
+            flex-direction: column; 
+            gap: 10px;
+            margin: 20px 0 30px;
+        }
+
+        .widget-btn {
+            width: 100%;
+            /* Botões internos já são discretos, mantive */
+            background: rgb(74, 138, 54); 
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.2s;
+            color: #000000;
+        }
+
+        .widget-btn:active {
+            background: #75ff4a;
+        }
+
+        .widget-btn:hover {
+            background: rgb(60, 255, 0);
+        }
+
+        /* Widgets - Estilos dentro do menu */
+        .widgets {
+            display: block; 
+            gap: 20px;
+            margin-top: 0;
+        }
+        
+        .widget {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px; 
+            text-align: center;
+            display: none; 
+            transition: all 0.4s ease;
+        }
+        
+        .widget.visible {
+            display: block;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .clock, .stopwatch, .temperature {
+            font-size: 28px;
+        }
+        
+        .stopwatch-controls {
+            justify-content: space-around;
+        }
+        
+        .stopwatch-btn {
+            padding: 1px 1px;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 15px;
+            transition: background 0.2s;
+            border: none;
+          
+        }
+        .stopwatch-btn:hover{
+            background: rgba(1, 136, 8, 0.3);
+            cursor: pointer;
+        }
+        /* Canvas */
+        .canvas-container {
+             display: none; 
+        }
+
+        /* ------------------------------------------- */
+        /* Responsividade (Ajustado ao novo tamanho do botão) */
+        /* ------------------------------------------- */
+        @media (max-width: 480px) {
+            h1 { font-size: 26px; }
+            
+            .side-menu-content {
+                width: 90%; 
+                right: -90%;
+            }
+            
+            /* Move o botão de toggle para o novo tamanho */
+            .menu-open #menuToggle {
+                right: 90%; 
+            }
+        }
+    </style>
+</head>
+<body id="body">
+
+    
+    <button id="menuToggle">☰</button>
+
+    <div class="side-menu-overlay" id="sideMenuOverlay">
+        <div class="side-menu-content" id="sideMenuContent">
+            
+            <div class="menu-header">
+            
+            <div class="widget-controls">
+                <button class="widget-btn " id="toggleClock">Relógio ⏰</button>
+                <button class="widget-btn" id="toggleStopwatch">Cronômetro ⏱️</button>
+                <button class="widget-btn" id="toggleWeather">Tempo ☀️</button>
+            </div>
+</div>            
+            <div class="widgets">
+                <div class="widget clock-widget" id="clockWidget">
+                    <div class="widget-title">Relógio</div>
+                    <div class="clock" id="clock">00:00:00</div>
+                    <div class="date" id="date">Carregando...</div>
+                </div>
+
+                <div class="widget stopwatch-widget" id="stopwatchWidget">
+                    <div class="widget-title">Cronômetro</div>
+                    <div class="stopwatch" id="stopwatch">00:00:00.00</div>
+                    <div class="stopwatch-controls">
+                        <button class="stopwatch-btn" id="startStopwatch">Iniciar</button>
+                        <button class="stopwatch-btn" id="pauseStopwatch">Pausar</button>
+                        <button class="stopwatch-btn" id="resetStopwatch">Resetar</button>
+                    </div>
+                </div>
+
+                <div class="widget weather-widget" id="weatherWidget">
+                    <div class="widget-title">Tempo e Temperatura</div>
+                    <div class="weather-info">
+                        <div class="temperature" id="temperature">--°C</div>
+                        <div class="weather-desc" id="weatherDesc">Carregando...</div>
+                        <div class="weather-details">
+                            <div class="weather-detail">
+                                <span>Umidade</span>
+                                <span id="humidity">--%</span>
+                            </div>
+                            <div class="weather-detail">
+                                <span>Vento</span>
+                                <span id="windSpeed">-- km/h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funções JavaScript (Mantidas, pois a lógica de tempo e controle é a mesma)
+        function drawCanvas() {
+            const canvas = document.getElementById('myCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const containerWidth = canvas.closest('.canvas-container').clientWidth;
+            
+            canvas.width = Math.min(600, containerWidth); 
+            canvas.height = canvas.width * 0.5; 
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            ctx.fillStyle = 'rgba(30, 30, 46, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Canvas Principal (Fora do Menu)', centerX, 40);
+            
+            const isSmallScreen = window.innerWidth < 480;
+            const radius = isSmallScreen ? 30 : 50;
+            const offset = isSmallScreen ? 80 : 100;
+
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#4ecdc4';
+            ctx.beginPath();
+            ctx.arc(centerX - offset, centerY, radius * 0.8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffd166';
+            ctx.beginPath();
+            ctx.arc(centerX + offset, centerY, radius * 0.8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '12px Arial';
+            ctx.fillText('Clique nos círculos', centerX, canvas.height - 20);
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('pt-BR');
+            const date = now.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            $('#clock').text(time);
+            $('#date').text(date.charAt(0).toUpperCase() + date.slice(1));
+        }
+
+        let stopwatchInterval;
+        let stopwatchRunning = false;
+        let stopwatchTime = 0;
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / 3600000);
+            const minutes = Math.floor((ms % 3600000) / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            const milliseconds = Math.floor((ms % 1000) / 10);
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateStopwatch() {
+            stopwatchTime += 10;
+            $('#stopwatch').text(formatTime(stopwatchTime));
+        }
+        
+        function updateWeather() {
+            const temperature = Math.floor(Math.random() * 15) + 15;
+            const humidity = Math.floor(Math.random() * 40) + 40;
+            const windSpeed = Math.floor(Math.random() * 20) + 5;
+            
+            const weatherConditions = ['Ensolarado', 'Parcialmente Nublado', 'Nublado', 'Chuvoso'];
+            const weatherDesc = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            
+            $('#temperature').text(`${temperature}°C`);
+            $('#weatherDesc').text(weatherDesc);
+            $('#humidity').text(`${humidity}%`);
+            $('#windSpeed').text(`${windSpeed} km/h`);
+        }
+        
+        function toggleWidget(buttonElement, widgetClass) {
+            const $button = $(buttonElement);
+            const $widget = $(widgetClass);
+            
+            $widget.toggleClass('visible');
+            $button.toggleClass('active');
+        }
+        
+        function toggleSideMenu() {
+            const $overlay = $('#sideMenuOverlay');
+            
+            $overlay.toggleClass('active');
+            
+            $('body').toggleClass('menu-open'); 
+            
+            if ($('body').hasClass('menu-open')) {
+                $('body').css('overflow-y', 'hidden');
+            } else {
+                 $('body').css('overflow-y', 'auto');
+            }
+        }
+
+
+        $(document).ready(function() {
+            // Inicialização e responsividade do Canvas
+            drawCanvas();
+            window.addEventListener('resize', drawCanvas);
+            
+            // Inicializa os timers
+            setInterval(updateClock, 1000);
+            updateClock();
+            setInterval(updateWeather, 30000);
+            updateWeather();
+
+            // Evento para abrir/fechar o menu lateral
+            $('#menuToggle').click(function() {
+                toggleSideMenu();
+            });
+            
+            // Evento para fechar o menu ao clicar fora dele (no overlay)
+            $('#sideMenuOverlay').click(function(e) {
+                if (e.target.id === 'sideMenuOverlay') {
+                    toggleSideMenu();
+                }
+            });
+
+            // Eventos de clique para os botões dos widgets (dentro do menu)
+            $('#toggleClock').click(function() {
+                toggleWidget(this, '#clockWidget');
+            });
+            
+            $('#toggleStopwatch').click(function() {
+                toggleWidget(this, '#stopwatchWidget');
+            });
+            
+            $('#toggleWeather').click(function() {
+                toggleWidget(this, '#weatherWidget');
+            });
+
+            // Cronômetro Controls (mantido)
+            $('#startStopwatch').click(function() {
+                if (!stopwatchRunning) {
+                    stopwatchInterval = setInterval(updateStopwatch, 10);
+                    stopwatchRunning = true;
+                }
+            });
+
+            $('#pauseStopwatch').click(function() {
+                if (stopwatchRunning) {
+                    clearInterval(stopwatchInterval);
+                    stopwatchRunning = false;
+                }
+            });
+
+            $('#resetStopwatch').click(function() {
+                clearInterval(stopwatchInterval);
+                stopwatchRunning = false;
+                stopwatchTime = 0;
+                $('#stopwatch').text('00:00:00.00');
+            });
+        });
+    </script>
+</body>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redefinição de Senha - SocialNet</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f7;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .email-wrapper {
+      width: 100%;
+      background-color: #f4f4f7;
+      padding: 40px 0;
+    }
+    .email-content {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .email-header {
+      background-color: #0066ff;
+      color: white;
+      text-align: center;
+      padding: 25px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .email-body {
+      padding: 30px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .email-body h2 {
+      color: #0066ff;
+      font-size: 20px;
+    }
+    .btn {
+      display: inline-block;
+      margin: 25px 0;
+      padding: 12px 24px;
+      background-color: #0066ff;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #004ecc;
+    }
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-content">
+      <div class="email-header">🔒 SocialNet</div>
+      <div class="email-body">
+        <h2>Olá {{ nome }},</h2>
+        <p>Recebemos uma solicitação para redefinir sua senha.</p>
+        <p>Para criar uma nova senha, clique no botão abaixo:</p>
+
+        <p style="text-align: center;">
+          <a href="{{ link }}" class="btn">Redefinir Senha</a>
+        </p>
+
+        <p>Se você não fez essa solicitação, ignore este e-mail.  
+        Seu acesso permanecerá seguro.</p>
+
+        <p>Atenciosamente,<br><strong>Equipe SocialNet</strong></p>
+      </div>
+      <div class="footer">
+        &copy; {{ now|date:"Y" }} SocialNet. Todos os direitos reservados.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

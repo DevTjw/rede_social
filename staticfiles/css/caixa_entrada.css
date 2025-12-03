@@ -1,0 +1,77 @@
+  /* ----- VISUAL GERAL ----- */
+    body {
+      background-color: #f5f7fb;
+      font-family: "Inter", "Segoe UI", sans-serif;
+    }
+
+    .inbox-container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .inbox-header {
+      background: linear-gradient(135deg, #007bff, #00a6ff);
+      color: #fff;
+      text-align: center;
+      padding: 20px 10px;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+
+    .conversation-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.2s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+
+    .conversation-item:hover {
+      background: #f8faff;
+      transform: translateY(-1px);
+    }
+
+    .conversation-info {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .conversation-info strong {
+      display: block;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .conversation-info small {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 10px;
+    }
+
+    .no-conversations {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+
+    /* ----- MOBILE ----- */
+    @media (max-width: 576px) {
+      .inbox-container {
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .conversation-item {
+        padding: 12px;
+      }
+    }

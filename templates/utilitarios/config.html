@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Windows Responsivo - Modelo Futurista Melhorado</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0d0d0d;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f0f0f0;
+        }
+
+        .container {
+            width: 90vmin;
+            max-width: 400px;
+            height: 90vmin;
+            max-height: 400px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1.5vmin;
+            padding: 1vmin;
+            box-sizing: border-box;
+            /* Sombra suave ao redor do contêiner */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
+            border-radius: 18px; /* Arredondamento para o container */
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.4s ease-in-out; 
+            cursor: pointer;
+            border-radius: 15px; /* PONTAS MAIS ARREDONDADAS AQUI! */
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8); /* Sombra interna mais forte */
+        }
+
+        /* Cores e Bordas Neon */
+        .item-3-1 { color: #00ffff; border: 2px solid #00ffff; } /* Ciano */
+        .item-3-2 { color: #ff00ff; border: 2px solid #ff00ff; } /* Roxo */
+        .item-3-3 { color: #00ffff; border: 2px solid #00ffff; } /* Ciano */
+        .item-3-4 { color: #ff00ff; border: 2px solid #ff00ff; } /* Roxo */
+        
+        /* Efeito de Brilho (Glow) AUMENTADO ao Passar o Mouse */
+        .item-3-1:hover { 
+            box-shadow: 0 0 30px #00ffff, 0 0 60px #00ffff, inset 0 0 20px rgba(0, 0, 0, 0.9); 
+            transform: scale(1.08); /* Mais destaque */
+            background-color: #0f1f1f; 
+        }
+        .item-3-2:hover { 
+            box-shadow: 0 0 30px #ff00ff, 0 0 60px #ff00ff, inset 0 0 20px rgba(0, 0, 0, 0.9); 
+            transform: scale(1.08);
+            background-color: #1f0f1f; 
+        }
+        .item-3-3:hover { 
+            box-shadow: 0 0 30px #00ffff, 0 0 60px #00ffff, inset 0 0 20px rgba(0, 0, 0, 0.9); 
+            transform: scale(1.08);
+            background-color: #0f1f1f; 
+        }
+        .item-3-4:hover { 
+            box-shadow: 0 0 30px #ff00ff, 0 0 60px #ff00ff, inset 0 0 20px rgba(0, 0, 0, 0.9); 
+            transform: scale(1.08);
+            background-color: #1f0f1f; 
+        }
+
+        .menu-item i {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .container {
+                gap: 1vmin;
+                width: 70vmin;
+                height: 70vmin;
+            }
+            .menu-item {
+                font-size: 0.8rem;
+            }
+            .menu-item i {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <a href="#" class="menu-item item-3-1">
+            <i class="fas fa-terminal"></i> <span>Console</span>
+        </a>
+        <a href="#" class="menu-item item-3-2">
+            <i class="fas fa-satellite-dish"></i> <span>Rede</span>
+        </a>
+        <a href="#" class="menu-item item-3-3">
+            <i class="fas fa-layer-group"></i> <span>Estrutura</span>
+        </a>
+        <a href="#" class="menu-item item-3-4">
+            <i class="fas fa-fingerprint"></i> <span>Segurança</span>
+        </a>
+    </div>
+</body>
+</html>

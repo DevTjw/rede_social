@@ -1,0 +1,662 @@
+{% load static %}
+
+<style>
+/* ===== Tema claro e escuro ===== */
+:root {
+  --primary: #4DE5A8; /* verde leve */
+  --bg-light: #FFFFFF; /* fundo principal bem claro */
+  --bg-light-blur: rgba(255,255,255,0.95); /* blur leve */
+  --bg-chat: rgba(255,255,255,0.1); /* bolha de conversa leve */
+  --text-light: #111; /* texto escuro suave */
+  --text-dark: #111;
+  --bubble-me: #E6FFE6; /* bolha própria clara */
+  --bubble-other: #F9F9F9; /* bolha de outros clara */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-light: #F0F0F0;
+    --bg-light-blur: rgba(245,245,245,0.95);
+    --bg-chat: rgba(255,255,255,0.15);
+    --bg-chat: rgba(255,255,255,0.1); /* bolha de conversa leve */
+    --text-light: #222;
+    --text-dark: #222;
+    --bubble-me: #D0FFD0;
+    --bubble-other: #FFFFFF;
+  }
+}
+
+/* ===== Botão flutuante ===== */
+.btn-conversar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--text-dark);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  z-index: 2000;
+}
+
+/* ===== Janela de chat ===== */
+.chat {
+  width: 65%;                 /* ocupa quase toda a largura disponível */
+  height: 75vh;               /* altura um pouco maior para aproveitar tela pequena */
+  right: 0%;   
+  position: fixed;
+  top: 10%;
+  right: 20px;
+  display: none;
+  flex-direction: row;
+  background: var(--bg-light-blur);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 2000;
+  color: var(--text-light);
+}
+
+/* ===== Sidebar lateral ===== */
+.chat-sidebar {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-light);
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ===== Botão toggle lista (mobile) ===== */
+.btn-toggle-lista {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--text-dark);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 4px 6px;
+  font-size: 12px;
+}
+
+/* ===== Menu de abas ===== */
+.chat-menu {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.menu-btn {
+  color: black;
+  flex: 1;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.menu-btn.ativo {
+  background: var(--primary);
+  color: var(--text-dark);
+  border-color: var(--primary);
+}
+
+/* ===== Busca ===== */
+.chat-top {
+  position: relative;
+  padding: 6px;
+}
+.chat-top input {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+/* ===== Lista lateral scroll ===== */
+.lista-seguidores,
+.lista-busca {
+  flex: 1;
+  overflow-y: auto;
+  margin: 6px;
+  border-radius: 8px;
+  background: var(--bg-light);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  color: black;
+}
+
+/* ===== Item da lista ===== */
+.seg-item,
+.lista-busca .item {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.seg-item:hover,
+.lista-busca .item:hover {
+  background: rgba(0,0,0,0.05);
+}
+.seg-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+/* Dropdown sobreposto */
+.lista-busca {
+    position: fixed !important;
+    top: 110px !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-height: 260px;
+    overflow-y: auto;
+    background: var(--bg-light);
+    border-radius: 0 0 12px 12px;
+    padding: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 4400 !important;
+}
+
+/* ===== Conversa ===== */
+.chat-conversa {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-chat);
+  padding: 8px;
+  border-radius: 0 16px 16px 0;
+}
+
+/* Mensagens */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+/* Bolhas de mensagem */
+.bubble {
+  background: var(--bubble-other);
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+.me {
+  background: var(--bubble-me);
+  margin-left: auto;
+}
+
+/* Formulário de envio */
+.chat-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.chat-form input {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 6px 10px;
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+.chat-form button {
+  background: var(--primary);
+  border: none;
+  color: var(--text-dark);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+/* Editar mensagem */
+.editar-btn {
+  font-size: 11px;
+  cursor: pointer;
+  margin-left: 6px;
+  opacity: 0.7;
+}
+
+/* ===== Modais acima do chat ===== */
+.modal-backdrop.show {
+  z-index: 200000 !important;
+}
+.modal {
+  z-index: 200001 !important;
+}
+.modal-content {
+  border-radius: 14px;
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.95);
+}
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+    background: rgba(245,245,245,0.95);
+    color: #222;
+  }
+}
+
+/* ===== Para telas até 768px ===== */
+@media (max-width: 768px) {
+
+  /* ===== Janela principal do chat ===== */
+  .chat {
+    width: 95%;                 /* ocupa quase toda a largura disponível */
+    height: 80vh;               /* altura um pouco maior para aproveitar tela pequena */
+    top: 8%;                    /* reduz espaço do topo */
+    right: 5px;                /* distancia da direita para centralizar levemente */
+    flex-direction: column;      /* empilha sidebar e conversa verticalmente */
+  }
+
+  /* ===== Sidebar lateral (lista de usuários, menu, busca) ===== */
+  .chat-sidebar {
+    width: 100%;                 /* ocupa toda a largura disponível */
+    flex-direction: row;         /* elementos internos ficam em linha horizontal */
+    overflow-x: auto;            /* permite rolagem horizontal se itens excederem largura */
+    border-right: none;          /* remove a borda direita que existia em desktop */
+    border-bottom: 1px solid rgba(0,0,0,0.1); /* adiciona linha inferior separando da conversa */
+  }
+
+  /* Botão para abrir/fechar lista no mobile */
+  .btn-toggle-lista {
+    display: inline-block;       /* exibe o botão de toggle na tela menor */
+  }
+
+  /* Lista de seguidores (dropdown lateral) */
+  .lista-seguidores {
+    display: none;               /* inicialmente escondida no mobile */
+    position: absolute;          /* posicionamento absoluto em relação ao chat */
+    top: 40px;                   /* abaixo do cabeçalho/menu */
+    left: 0;                     /* alinhada à esquerda da janela */
+    width: 100%;                 /* ocupa toda a largura disponível */
+    height: 200px;               /* altura fixa para caber na tela */
+    z-index: 4000;               /* sobrepõe outros elementos */
+  }
+
+  /* Área da conversa (mensagens + input) */
+  .chat-conversa {
+    flex: 1 1 auto;              /* cresce para ocupar espaço disponível */
+    display: flex;               /* flex container para alinhar mensagens e formulário */
+    flex-direction: column;       /* mensagens empilhadas verticalmente */
+    border-radius: 0 0 16px 16px; /* cantos arredondados apenas na parte inferior */
+    padding: 6px;                /* espaço interno para conforto visual */
+    min-height: 0;               /* essencial para rolagem funcionar corretamente em flexbox */
+  }
+
+  /* Área de mensagens (bolhas de chat) */
+  .chat-messages {
+    flex: 1 1 auto;              /* ocupa todo o espaço disponível na conversa */
+    height: calc(90vh - 140px);  /* altura calculada considerando cabeçalho + input */
+    overflow-y: auto;            /* habilita rolagem vertical se houver muitas mensagens */
+    padding: 6px;                /* espaçamento interno */
+    border-radius: 8px;          /* cantos levemente arredondados */
+    min-height: 0;               /* evita que a área extrapole e quebra o layout */
+    background: var(--bg-chat);  /* cor de fundo definida nas variáveis de tema */
+  }
+
+  /* Formulário de envio (input + botão) */
+  .chat-form {
+    flex-shrink: 0;              /* não encolhe quando o espaço da conversa diminui */
+    display: flex;               /* input e botão alinhados horizontalmente */
+    gap: 6px;                    /* espaço entre input e botão */
+    margin-top: 6px;             /* separação visual da lista de mensagens */
+  }
+
+  /* Ajuste de fonte em mobile */
+  .chat-form input,
+  .chat-form button {
+    font-size: 14px;             /* tamanho de texto adequado para toque */
+  }
+}
+
+/* ===== Ajustes para telas pequenas (até 448px) ===== */
+@media (max-width: 448px) {
+
+  .chat {
+    width: 95%;                 /* ocupa quase toda a largura disponível */
+    height: 75vh;               /* altura um pouco maior para aproveitar tela pequena */
+    top: 8%;                    /* reduz espaço do topo */
+    right: 5px;                  /* ajusta margem direita para centralizar */
+  }
+
+  .chat-messages {
+    height: calc(92vh - 130px); /* ajusta altura considerando cabeçalho + input menor */
+  }
+
+  .chat-form input,
+  .chat-form button {
+    font-size: 15px;             /* fonte menor para caber melhor na tela */
+    padding: 5px 5px;            /* padding reduzido para não ocupar muito espaço */
+  }
+
+  /* Sidebar lateral: permite rolagem horizontal se conteúdo for maior que a tela */
+  .chat-sidebar {
+    overflow-x: scroll;
+  }
+}
+</style>
+
+{% if user.is_authenticated %}
+<!-- Botão Flutuante -->
+<button id="btnChat" class="btn-conversar">💬</button>
+
+<!-- Janela de Chat -->
+<section class="chat" id="chatSection">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+        <button id="btnToggleLista" class="btn-toggle-lista">👥 Lista</button>
+        <div class="chat-menu">
+            <button class="menu-btn ativo" data-tipo="seguidores">👥 Seguidores</button>
+            <button class="menu-btn" data-tipo="seguindo">➡ Seguindo</button>
+            <button class="menu-btn" data-tipo="todos">🌍 Todos</button>
+        </div>
+
+        <!-- Busca -->
+        <div class="chat-top">
+            <input type="text" id="buscaUsuarios" placeholder="Buscar pessoa..." autocomplete="off">
+            <div id="listaBusca" class="lista-busca"></div>
+        </div>
+
+        <!-- Lista de usuários -->
+        <div class="lista-seguidores" id="listaSeguidores"></div>
+    </div>
+
+    <!-- Área de conversa -->
+    <div class="chat-conversa">
+        <div class="chat-messages" id="chatBox"></div>
+        <div class="chat-form">
+            {% csrf_token %}
+            <input type="text" id="chatInput" placeholder="Digite uma mensagem...">
+            <button id="btnSend">Enviar</button>
+        </div>
+    </div>
+</section>
+
+<!-- Modal Bootstrap: Editar Mensagem -->
+<div class="modal fade" id="modalEditarMsg" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar mensagem</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="editarTexto" class="form-control" rows="3"></textarea>
+        <input type="hidden" id="editarMsgId">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnSalvarEdicao">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+
+let usuarioAtivo = null;
+let ignorarPrimeiroClique = true;
+
+/* ----- Abrir / Fechar Janela ----- */
+document.getElementById("btnChat").onclick = () => {
+    const box = document.getElementById("chatSection");
+    box.style.display = box.style.display === "flex" ? "none" : "flex";
+};
+
+/* ----- Fechar se clicar fora ----- */
+document.addEventListener("click", e => {
+    const chat = document.getElementById("chatSection");
+    const btn = document.getElementById("btnChat");
+    if (!chat.contains(e.target) && !btn.contains(e.target)) {
+        chat.style.display = "none";
+    }
+});
+
+/* ----- Toggle lista lateral mobile ----- */
+document.getElementById("btnToggleLista").onclick = () => {
+    const lista = document.getElementById("listaSeguidores");
+    lista.style.display = lista.style.display === "block" ? "none" : "block";
+};
+
+/* ----- Troca de abas ----- */
+document.querySelectorAll(".menu-btn").forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+
+        document.getElementById("buscaUsuarios").value = "";
+        document.getElementById("listaBusca").style.display = "none";
+        carregarLista(btn.dataset.tipo);
+    };
+});
+
+/* ----- Carregar lista lateral ----- */
+async function carregarLista(tipo) {
+    const lista = document.getElementById("listaSeguidores");
+    lista.dataset.tipo = tipo;
+    lista.innerHTML = "<small>Carregando...</small>";
+
+    try {
+        const r = await fetch(`/mensagens/buscar_usuarios_gen/?tipo=${tipo}`);
+        const data = await r.json();
+        lista.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            lista.innerHTML = "<small>Nenhum usuário encontrado.</small>";
+            return;
+        }
+
+        data.forEach(u => {
+            const item = document.createElement("div");
+            item.className = "seg-item pessoa";
+            item.dataset.username = u.username;
+            item.innerHTML = `
+                <img src="${u.imagem_url}" class="seg-img">
+                <div>
+                    <strong>${u.nome}</strong><br>
+                    <small>@${u.username}</small>
+                </div>
+            `;
+            lista.appendChild(item);
+        });
+    } catch (err) {
+        lista.innerHTML = "<small>Erro ao carregar usuários.</small>";
+        console.error(err);
+    }
+}
+
+
+window.addEventListener("load", () => {
+    // Ativa a aba seguidores visualmente
+    const btnInicial = document.querySelector('.menu-btn[data-tipo="seguidores"]');
+    document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("ativo"));
+    btnInicial.classList.add("ativo");
+
+    // Carrega os seguidores automaticamente
+    carregarLista("seguidores");
+
+    // Deixa a lista aberta na carga inicial
+    const lista = document.getElementById("listaSeguidores");
+    lista.style.display = "block";
+});
+
+/* ----- Busca dinâmica ----- */
+document.getElementById("buscaUsuarios").addEventListener("input", async function () {
+    const termo = this.value.trim();
+    const lista = document.getElementById("listaBusca");
+    const tipo = document.querySelector(".menu-btn.ativo").dataset.tipo;
+
+    if (!termo) { 
+        lista.style.display = "none"; 
+        return; 
+    }
+
+    try {
+        const r = await fetch(`/mensagens/buscar_usuarios_gen/?tipo=${tipo}&q=${encodeURIComponent(termo)}`);
+        const data = await r.json();
+
+        lista.innerHTML = "";
+        data.forEach(u => {
+            const item = document.createElement("div");
+            item.className = "item pessoa";
+            item.dataset.username = u.username;
+            item.innerHTML = `
+                <img src="${u.imagem_url}" width="32" height="32" class="seg-img">
+                <strong>${u.nome}</strong> <small>@${u.username}</small>
+            `;
+            lista.appendChild(item);
+        });
+
+        lista.style.display = data.length > 0 ? "block" : "none";
+    } catch (err) {
+        lista.style.display = "none";
+        console.error(err);
+    }
+});
+
+/* ----- Selecionar usuário ----- */
+document.addEventListener("click", e => {
+    const item = e.target.closest(".pessoa");
+    if (!item) return;
+
+    usuarioAtivo = item.dataset.username;
+    document.getElementById("listaBusca").style.display = "none";
+    carregarConversa();
+});
+
+/* ----- Carregar conversa ----- */
+async function carregarConversa() {
+    if (!usuarioAtivo) return;
+    try {
+        const r = await fetch(`/mensagens/conversa/${usuarioAtivo}/atualizar/`);
+        const data = await r.json();
+        renderizarMensagens(data.mensagens);
+    } catch (err) { console.error(err); }
+}
+
+/* ----- Renderizar mensagens ----- */
+function renderizarMensagens(msgs) {
+    const box = document.getElementById("chatBox");
+    box.innerHTML = "";
+    msgs.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "bubble" + (m.proprio ? " me" : "");
+        div.innerHTML = `${m.conteudo} ${m.editado ? "(editado)" : ""}`;
+
+        if (m.proprio) {
+            const editar = document.createElement("span");
+            editar.className = "editar-btn";
+            editar.innerText = "✏️";
+            editar.onclick = () => editarMensagem(m.id, m.conteudo);
+            div.appendChild(editar);
+        }
+
+        box.appendChild(div);
+    });
+    box.scrollTop = box.scrollHeight;
+}
+
+/* ----- Enviar mensagem ----- */
+document.getElementById("btnSend").onclick = enviar;
+async function enviar() {
+    const input = document.getElementById("chatInput");
+    const texto = input.value.trim();
+    if (!texto || !usuarioAtivo) return;
+
+    try {
+        await fetch(`/mensagens/conversa/${usuarioAtivo}/enviar/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ conteudo: texto })
+        });
+
+        input.value = "";
+        carregarConversa();
+    } catch (err) { console.error(err); }
+}
+
+// Enviar mensagem ao pressionar Enter
+document.getElementById("chatInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();  // evita que quebre a linha no input
+        enviar();                // chama a função de envio já existente
+    }
+});
+
+/* ----- Editar mensagem (modal Bootstrap) ----- */
+document.addEventListener("DOMContentLoaded", () => {
+    let modalEditar = new bootstrap.Modal(document.getElementById("modalEditarMsg"));
+
+    // Função de editar mensagem
+    window.editarMensagem = function(id, conteudo) {
+        document.getElementById("editarTexto").value = conteudo;
+        document.getElementById("editarMsgId").value = id;
+        modalEditar.show();
+    }
+
+    // Botão salvar edição
+    document.getElementById("btnSalvarEdicao").onclick = async () => {
+        const novoTexto = document.getElementById("editarTexto").value.trim();
+        const id = document.getElementById("editarMsgId").value;
+        if (!novoTexto) return;
+
+        try {
+            await fetch(`/mensagens/mensagem/${id}/editar/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ conteudo: novoTexto })
+            });
+            modalEditar.hide();
+            carregarConversa();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+});
+
+/* ----- opção para fechar todos os botoes */
+document.addEventListener("click", (e) => {
+
+    if (ignorarPrimeiroClique) {
+        ignorarPrimeiroClique = false;
+        return;
+    }
+
+    const lista = document.getElementById("listaSeguidores");
+    const btnLista = document.getElementById("btnToggleLista");
+    const menu = document.querySelector(".chat-menu");
+
+    if (!lista.contains(e.target) && e.target !== btnLista && !menu.contains(e.target)) {
+        lista.style.display = "none";
+    }
+});
+
+
+ /* ----- Atualização automática das mensagens ----- */
+setInterval(() => { if (usuarioAtivo) carregarConversa(); }, 20000);
+
+
+
+</script>
+{% endblock %}
+{% endif %}
