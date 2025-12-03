@@ -1,0 +1,107 @@
+
+# ========================
+# Ambiente Virtual
+# ========================
+venv/
+rede_social_venv/
+ENV/
+env/
+.venv/
+
+# ========================
+# Python compilado
+# ========================
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# ========================
+# Configurações sensíveis
+# ========================
+.env
+*.env
+*.secret
+
+# ========================
+# Banco de dados
+# ========================
+*.sqlite3
+*.db
+*.dump
+*.sql
+
+# ========================
+# Arquivos de mídia dos usuários
+# ========================
+uploads/
+inf/
+
+# ========================
+# Arquivos estáticos coletados
+# ========================
+
+
+# ========================
+# Logs
+# ========================
+*.log
+logs/
+debug.log
+
+# ========================
+# Celery
+# ========================
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+*.pid
+
+# ========================
+# Docker
+# ========================
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# ========================
+# IDEs / Editors
+# ========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ========================
+# Testes / Coverage
+# ========================
+.pytest_cache/
+.coverage
+coverage.xml
+nosetests.xml
+test-results/
+
+# ========================
+# Django specific
+# ========================
+db.sqlite3
+local_settings.py
+*.pot
+*.mo
+__pycache__/
+*.py[cod]
+
+# ========================
+# Misc / OS
+# ========================
+.DS_Store
+Thumbs.db
+# ========================
+# Hintrc
+# ========================
+.hintrc
+.env

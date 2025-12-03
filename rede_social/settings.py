@@ -87,31 +87,41 @@ CHANNEL_LAYERS = {
     },
 }
 
-'''
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+from decouple import config
+
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'rede_loja'),
-        'USER': os.getenv('DB_USER', 'clebertjw'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'redeloja'),
-        'HOST': os.getenv('DB_HOST', 'db'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
-# Configuração Redis (se for usar caching ou Celery)
-REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
-REDIS_PORT = os.getenv('REDIS_PORT', 6379)
+# Redis (opcional)
+REDIS_HOST = config('REDIS_HOST', default='localhost')
+REDIS_PORT = config('REDIS_PORT', cast=int, default=6379)
 
-# Segurança mínima para produção
-DEBUG = False
-ALLOWED_HOSTS = ['*']  # Para testes locais, ajustar para o domínio real em produção
-# ⚠️ Em produção real, nunca use ALLOWED_HOSTS=['*']. Aqui é só para teste local via Docker.
+# E-mail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-'''
+# WhatsApp
+WHATSAPP_TOKEN = config('WHATSAPP_TOKEN')
+WHATSAPP_PHONE_NUMBER_ID = config('WHATSAPP_PHONE_NUMBER_ID')
+WHATSAPP_BUSINESS_ACCOUNT_ID = config('WHATSAPP_BUSINESS_ACCOUNT_ID')
+# Configurações para
+
 # uso local para teste
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -248,23 +258,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
-# ===============================
-# Configurações de E-mail (Gmail SMTP)
-# ===============================
-# Configurações para enviar e-mails usando o Gmail SMTP.
-# para produção troque console, por smtp
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = 'LabySim <tec.tjw@gmail.com>'
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True # Use TLS para segurança 
-EMAIL_HOST_USER = 'tec.tjw@gmail.com' # Coloque seu e-mail do Gmail aqui
-EMAIL_HOST_PASSWORD = 'bsxt uase xiub mfic'  # Use uma senha de app do Gmail
-
-
-WHATSAPP_TOKEN = 'EAALol6BRH58BQKceopGZApg7OEdcXKJSsmbNUMaLuZChp2AtwINuklYMMoIHWOrvgZAYfwSQH23ywlST1YKcWfsBeIlGjR5EkAvfwRxbroPjJjK1xTin0Qao5ZB2fu8R6yeweBSijsW9KwFL9OrPIQsYlMw0y5L4tPVGUZBmSm0slrq0hOTPbOBGnFlhLuUDHUdZANhDqo6ZBaBYbVedEyXi96WcdMzBQWPHB3nc7vX3Ak71QrpkfXZB9mSgyLlJBVZATVsdBhYA5FMryGLZAbGopFHbxfux9V6WdsILYFzBwZD'  # SEU token de acesso da Meta
-WHATSAPP_PHONE_NUMBER_ID = '15556014671'  # ID fornecido pela Meta
 
 
 # ===============================
