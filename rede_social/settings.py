@@ -20,11 +20,14 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 # -------------------------------
 # ALLOWED_HOSTS
 # -------------------------------
+from decouple import config
+
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default=".onrender.com",  # permite qualquer subdomínio do Render
+    default="127.0.0.1,localhost",
     cast=lambda v: [s.strip() for s in v.split(",")]
 )
+
 print("ALLOWED_HOSTS =", ALLOWED_HOSTS)
 
 # -------------------------------
