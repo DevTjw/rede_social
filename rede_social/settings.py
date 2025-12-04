@@ -21,7 +21,7 @@ SECRET_KEY = config("SECRET_KEY", default="insecure-dev-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 # Permite vários hosts separados por vírgula
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=".onrender.com,localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=".onrender.com").split(",")
 
 # ============================================================
 # 🔌 APPLICATIONS
