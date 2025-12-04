@@ -17,12 +17,10 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = False  # Render exige produção
 
-ALLOWED_HOSTS = ['rede-social-h2fn.onrender.com']
 
-# Pega automaticamente o hostname externo do Render
-render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
-if render_hostname:
-    ALLOWED_HOSTS.append(render_hostname)
+# Para produção no Render, pega o hostname automaticamente
+ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME", "rede-social-h2fn.onrender.com")]
+
 
 # ============================================================
 # 📦 Apps
