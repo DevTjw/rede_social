@@ -19,7 +19,7 @@ DEBUG = False  # Render exige produção
 
 
 # Para produção no Render, pega o hostname automaticamente
-ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME", "rede-social-h2fn.onrender.com")]
+ALLOWED_HOSTS = ["rede-social-h2fn.onrender.com"]
 
 
 # ============================================================
@@ -85,12 +85,16 @@ ASGI_APPLICATION = 'rede_social.asgi.application'
 # 🗄 Banco de Dados (Render → PostgreSQL)
 # ============================================================
 
+import dj_database_url
+from decouple import config
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=config("DATABASE_URL"),
+    'default': dj_database_url.parse(
+        config("DATABASE_URL"),
         conn_max_age=600
     )
 }
+
 
 # ============================================================
 # 📧 Email
