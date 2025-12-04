@@ -26,6 +26,7 @@ ALLOWED_HOSTS = config(
     default=".onrender.com",  # permite qualquer subdomínio do Render
     cast=lambda v: [s.strip() for s in v.split(",")]
 )
+print("ALLOWED_HOSTS =", ALLOWED_HOSTS)
 
 # -------------------------------
 # INSTALLED APPS
