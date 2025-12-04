@@ -1,30 +1,29 @@
-"""
-Django settings for rede_social project.
-"""
-
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 from decouple import config
+import dj_database_url
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ============================================================
-# 🔐 SECURITY — SECRET KEY, DEBUG, HOSTS
+# 🔐 Segurança
 # ============================================================
 
-SECRET_KEY = config("SECRET_KEY", default="insecure-dev-key")
+SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = False  # Render exige produção
 
-# Permite vários hosts separados por vírgula
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=".onrender.com").split(",")
+ALLOWED_HOSTS = [
+    "*",
+    os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+]
 
 # ============================================================
-# 🔌 APPLICATIONS
+# 📦 Apps
 # ============================================================
 
 INSTALLED_APPS = [
@@ -39,6 +38,10 @@ INSTALLED_APPS = [
     'mensagens',
 ]
 
+# ============================================================
+# ⚙️ Middleware
+# ============================================================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -52,6 +55,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'rede_social.urls'
+
+# ============================================================
+# 🎨 Templates
+# ============================================================
 
 TEMPLATES = [
     {
@@ -74,81 +81,39 @@ TEMPLATES = [
 WSGI_APPLICATION = 'rede_social.wsgi.application'
 ASGI_APPLICATION = 'rede_social.asgi.application'
 
-
 # ============================================================
-# 📦 DATABASE
-# ============================================================
-
-# Se estiver no Render → PostgreSQL automático
-if config("RENDER", default=False, cast=bool):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("DB_NAME"),
-            "USER": config("DB_USER"),
-            "PASSWORD": config("DB_PASSWORD"),
-            "HOST": config("DB_HOST"),
-            "PORT": config("DB_PORT", default="5432"),
-        }
-    }
-else:
-    # Local
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-
-# ============================================================
-# 📡 REDIS & CHANNELS (opcional)
+# 🗄 Banco de Dados (Render → PostgreSQL)
 # ============================================================
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(config("REDIS_HOST", default="localhost"), 6379)],
-        },
-    },
+DATABASES = {
+    "default": dj_database_url.config(
+        default=config("DATABASE_URL"),
+        conn_max_age=600
+    )
 }
 
-CELERY_BROKER_URL = f"redis://{config('REDIS_HOST', default='localhost')}:6379/0"
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-
-
 # ============================================================
-# 📩 EMAIL
+# 📧 Email
 # ============================================================
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default=None)
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default=None)
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default=None)
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=None)
-
-
-# ============================================================
-# 🌐 SITE URL
-# ============================================================
-
-SITE_URL = config("SITE_URL", default="http://localhost:8000")
-
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # ============================================================
-# 🔑 WHATSAPP
+# 📞 WhatsApp / Tokens externos
 # ============================================================
 
-WHATSAPP_TOKEN = config('WHATSAPP_TOKEN', default=None)
-WHATSAPP_PHONE_NUMBER_ID = config('WHATSAPP_PHONE_NUMBER_ID', default=None)
-WHATSAPP_BUSINESS_ACCOUNT_ID = config('WHATSAPP_BUSINESS_ACCOUNT_ID', default=None)
-
+WHATSAPP_TOKEN = config('WHATSAPP_TOKEN', default='')
+WHATSAPP_PHONE_NUMBER_ID = config('WHATSAPP_PHONE_NUMBER_ID', default='')
+WHATSAPP_BUSINESS_ACCOUNT_ID = config('WHATSAPP_BUSINESS_ACCOUNT_ID', default='')
 
 # ============================================================
-# 🔐 PASSWORD VALIDATION
+# 🧅 Auth
 # ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -158,9 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # ============================================================
-# 🌍 LANGUAGE & TIMEZONE
+# 🌎 Internacionalização
 # ============================================================
 
 LANGUAGE_CODE = 'pt-br'
@@ -168,36 +132,25 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-
 # ============================================================
-# 🎨 STATIC FILES
+# 🎨 Arquivos Estáticos (Render + Whitenoise)
 # ============================================================
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
 # ============================================================
-# 📁 MEDIA FILES
+# 🖼 Arquivos de Mídia
 # ============================================================
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
 # ============================================================
-# 🔐 AUTH & LOGIN
-# ============================================================
-
-LOGIN_REDIRECT_URL = 'home'
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'home'
-
-
-# ============================================================
-# MESSAGES
+# 🔔 Django Messages
 # ============================================================
 
 MESSAGE_TAGS = {
@@ -207,5 +160,13 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+# ============================================================
+# 🔐 Outros
+# ============================================================
+
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'home'
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
