@@ -206,3 +206,20 @@ WHATSAPP_BUSINESS_ACCOUNT_ID = config("WHATSAPP_BUSINESS_ACCOUNT_ID", default=""
 # DEFAULT AUTO FIELD
 # -------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+criar super usuario
+from django.contrib.auth import get_user_model
+
+if os.getenv("AUTO_CREATE_SUPERUSER") == "true":
+    try:
+        User = get_user_model()
+        if not User.objects.filter(username=os.getenv("ADMIN_USERNAME")).exists():
+            User.objects.create_superuser(
+                os.getenv("ADMIN_USERNAME"),
+                os.getenv("ADMIN_EMAIL"),
+                os.getenv("ADMIN_PASSWORD")
+            )
+    except:
+        pass
+
