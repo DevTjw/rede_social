@@ -202,24 +202,37 @@ WHATSAPP_TOKEN = config("WHATSAPP_TOKEN", default="")
 WHATSAPP_PHONE_NUMBER_ID = config("WHATSAPP_PHONE_NUMBER_ID", default="")
 WHATSAPP_BUSINESS_ACCOUNT_ID = config("WHATSAPP_BUSINESS_ACCOUNT_ID", default="")
 
-# -------------------------------
-# DEFAULT AUTO FIELD
-# -------------------------------
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# --------------------------------------------
+# AUTO CREATE SUPERUSER (Render)
+# --------------------------------------------
 
-criar super usuario
 from django.contrib.auth import get_user_model
+from django.db.utils import OperationalError, ProgrammingError
 
 if os.getenv("AUTO_CREATE_SUPERUSER") == "true":
     try:
         User = get_user_model()
-        if not User.objects.filter(username=os.getenv("ADMIN_USERNAME")).exists():
-            User.objects.create_superuser(
-                os.getenv("ADMIN_USERNAME"),
-                os.getenv("ADMIN_EMAIL"),
-                os.getenv("ADMIN_PASSWORD")
-            )
-    except:
-        pass
 
+        username = os.getenv("ADMIN_USERNAME", "admin")
+        email = os.getenv("ADMIN_EMAIL", "admin@example.com")
+        password = os.getenv("ADMIN_PASSWORD", "admin123")
+
+        if not User.objects.filter(username=username).exists():
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            print(">>> Superusuário criado automaticamente no Render.")
+        else:
+            print(">>> Superusuário já existe — não criado novamente.")
+
+    except (OperationalError, ProgrammingError):
+        # Banco ainda não está pronto, ignora e continua
+        print(">>> Banco ainda não está pronto para criar superusuário.")
+
+# -------------------------------
+# DEFAULT AUTO FIELD
+# -------------------------------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
