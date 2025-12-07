@@ -24,6 +24,12 @@ from django.contrib.sites.shortcuts import get_current_site
 
 #  View de login
 def login_view(request):
+    
+    # ⛔ Se já estiver logado, redireciona para "/"
+    if request.user.is_authenticated:
+        messages.info(request, "Você já está logado.")
+        return redirect('home')
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -89,6 +95,7 @@ def register_view(request):
                     {
                         "username": user.username,
                         "confirm_url": confirm_url,
+                        "SITE_NAME": current_site.name,
                     }
                 )
                 plain_message = strip_tags(html_message)
@@ -168,7 +175,7 @@ def solicitar_redefinicao_senha(request):
             plain_message = strip_tags(html_message)
 
             send_mail(
-                subject='Redefinição de Senha - SocialNet',
+                subject=f'Redefinição de Senha - {settings.SITE_NAME}',
                 message=plain_message,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],

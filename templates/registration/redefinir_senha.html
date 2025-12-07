@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Nova Senha{% endblock %}
+{% block title %}Nova Senha - {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -8,6 +8,7 @@
             <div class="card-body p-5">
                 <div class="text-center mb-4">
                     <div class="container mt-5">
+                        <h3 ><p class="navbar-brand text-center">{{ SITE_NAME }}</p></h3>
                         {% if valido %}
                         <h3>Digite sua nova senha</h3>
                         <form method="post">

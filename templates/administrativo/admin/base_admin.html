@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ SITE_NAME }} Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            {{ SITE_NAME }}
+        </a>
+
+        <!-- Botão mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Conteúdo -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+            <!-- Links à esquerda -->
+            <ul class="navbar-nav me-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Links da direita -->
+            <ul class="navbar-nav ms-auto">
+
+                {% if user.is_authenticated %}
+
+                <!-- 🔔 Dropdown mensagens -->
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-envelope fa-lg"></i>
+
+                        {% if total_nao_lidas > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ total_nao_lidas }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-end p-0 shadow-lg">
+                        <h6 class="dropdown-header bg-dark text-white">Mensagens</h6>
+
+                        {% for conversa in conversas_dropdown %}
+                        <a class="dropdown-item d-flex align-items-center"
+                           href="{% url 'mensagens:conversa' conversa.outro_username %}">
+                            <img src="{{ conversa.foto_perfil_url }}" class="rounded-circle me-2" width="40" height="40">
+                            <div class="flex-grow-1">
+                                <strong>{{ conversa.outro_username }}</strong>
+                                <div class="small text-muted">
+                                    {{ conversa.ultima_data|timesince }} atrás
+                                    {% if conversa.nao_lidas > 0 %}
+                                        • <span class="badge bg-primary">{{ conversa.nao_lidas }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <span class="dropdown-item text-muted small">Nenhuma mensagem</span>
+                        {% endfor %}
+
+                        <div class="dropdown-divider"></div>
+
+                        <a class="dropdown-item text-center small" href="{% url 'mensagens:caixa_entrada' %}">
+                            Ver todas as mensagens
+                        </a>
+                    </div>
+                </li>
+
+                <!-- 👤 Dropdown do usuário -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+
+                        {% if user.perfil.foto_perfil %}
+                        <img src="{{ user.perfil.foto_perfil.url }}" class="rounded-circle me-2" width="32" height="32">
+                        {% else %}
+                        <i class="fas fa-user-circle fa-2x me-1"></i>
+                        {% endif %}
+
+                        {{ user.username }}
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-4 p-2">
+
+                        <!-- Header com nome -->
+                        <li class="dropdown-header text-muted small text-uppercase">
+                            {{ user.get_full_name|default:user.username }}
+                        </li>
+
+                        <!-- Área Pessoal -->
+                        <li class="dropdown-header text-muted small text-uppercase mt-2">Minha área</li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'perfil' user.username %}">
+                                <i class="fas fa-user me-2 text-secondary"></i> Meu Perfil
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'editar_perfil' %}">
+                                <i class="fas fa-user-edit me-2 text-secondary"></i> Editar Perfil
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'core:painel' %}">
+                                <i class="fas fa-chart-line me-2 text-primary"></i> Dashboard
+                            </a>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <!-- Mensagens -->
+                        <li class="dropdown-header text-muted small text-uppercase">Mensagens</li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'mensagens:caixa_entrada' %}">
+                                <i class="fas fa-inbox me-2 text-secondary"></i> Caixa de Entrada
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'mensagens:enviar_mensagem_geral' %}">
+                                <i class="fas fa-paper-plane me-2 text-secondary"></i> Enviar Mensagem
+                            </a>
+                        </li>
+
+                        {% if user.is_staff or user.is_superuser %}
+                        <!-- Administração -->
+                         <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-header text-muted small text-uppercase">Administração</li>
+                        
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center"
+                               href="{% url 'painel_admin:admin_dashboard' %}">
+                                <i class="fas fa-tools me-2 text-warning"></i> Dashboard Administrativo
+                            </a>
+                        </li>
+                        <li>
+                        <a class="dropdown-item d-flex align-items-center"
+                        href="{% url 'painel_admin:admin_ativacao_usuarios' %}">
+                            <i class="fas fa-user-check me-2 text-warning"></i> Ativar Usuários
+                        </a>
+                        </li>
+
+                        {% endif %}
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <!-- Logout -->
+                        <li>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button class="dropdown-item text-danger d-flex align-items-center">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Sair
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+                </li>
+
+                {% else %}
+
+                <!-- Visitante -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">
+                        Entrar
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">
+                        Cadastrar
+                    </a>
+                </li>
+
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Container principal + mensagens Django -->
+<div class="container mt-4">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% block content %}
+    
+    {% endblock %}
+</div>
+
+{% include "mensagens/flutuante.html" %}
+{% block extra_scripts %}
+{% endblock %}
+
+
+<footer class="bg-dark text-white text-center py-3 mt-4">
+    <div class="container">
+        <small>&copy; 2024 {{ SITE_NAME }}. Todos os direitos reservados.</small>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

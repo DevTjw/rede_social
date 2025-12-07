@@ -1,0 +1,56 @@
+
+{% extends "administrativo/admin/base_admin.html" %}
+{% load static %}
+{% block title %} Dashboard Administrativo {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4 fw-bold">Dashboard Administrativo</h2>
+
+    <div class="row mb-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm text-center p-4">
+                <h5>Usuários Ativos</h5>
+                <h3 class="text-success">{{ ativos }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm text-center p-4">
+                <h5>Usuários Inativos</h5>
+                <h3 class="text-danger">{{ inativos }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow p-4">
+        <h5 class="mb-3">Usuários criados por dia</h5>
+        <canvas id="chart"></canvas>
+    </div>
+
+</div>
+
+<script>
+const ctx = document.getElementById("chart");
+
+new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+            label: "Novos usuários",
+            data: {{ values|safe }},
+            borderColor: "rgb(75, 192, 192)",
+            borderWidth: 2,
+            fill: false,
+            tension: 0.3
+        }]
+    }
+});
+</script>
+{% endblock %}
+
+

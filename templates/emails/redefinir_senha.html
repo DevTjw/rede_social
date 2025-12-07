@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redefinição de Senha - SocialNet</title>
+  <title>Redefinição de Senha - {{ SITE_NAME }}</title>
   <style>
     body {
       margin: 0;
@@ -65,7 +65,7 @@
 <body>
   <div class="email-wrapper">
     <div class="email-content">
-      <div class="email-header">🔒 SocialNet</div>
+      <div class="email-header">🔒 {{ SITE_NAME }}</div>
       <div class="email-body">
         <h2>Olá {{ nome }},</h2>
         <p>Recebemos uma solicitação para redefinir sua senha.</p>
@@ -78,10 +78,10 @@
         <p>Se você não fez essa solicitação, ignore este e-mail.  
         Seu acesso permanecerá seguro.</p>
 
-        <p>Atenciosamente,<br><strong>Equipe SocialNet</strong></p>
+        <p>Atenciosamente,<br><strong>Equipe {{ SITE_NAME }}</strong></p>
       </div>
       <div class="footer">
-        &copy; {{ now|date:"Y" }} SocialNet. Todos os direitos reservados.
+        &copy; {{ now|date:"Y" }} {{ SITE_NAME }}. Todos os direitos reservados.
       </div>
     </div>
   </div>

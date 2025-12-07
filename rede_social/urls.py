@@ -17,8 +17,12 @@ urlpatterns = [
     path('', index, name='home'),  # ⬅ rota para a página inicial
     
     path('admin/', admin.site.urls),
+
     path('core/', include('core.urls')),
+
     path('usuarios/', include('usuarios.urls')),
+    path("painel-admin/", include("usuarios.urls_admin", namespace='painel_admin')),
+    
     path('mensagens/', include('mensagens.urls', namespace='mensagens')),
     
 ]

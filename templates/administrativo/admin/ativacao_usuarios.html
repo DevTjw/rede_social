@@ -1,0 +1,124 @@
+{% extends "administrativo/admin/base_admin.html" %}
+{% load static %}
+{% block title %}{{ SITE_NAME }} - Ativação de Usuários{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <h2 class="mb-4 text-center fw-bold">Painel de Ativação de Usuários</h2>
+
+    <!-- Filtros -->
+<form class="row mb-4" method="get">
+
+    <!-- Busca por nome ou email -->
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="Buscar por nome ou e-mail"
+               value="{{ filtro_q }}">
+    </div>
+
+    <!-- Filtro por status -->
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="todos"   {% if status == "todos" %}selected{% endif %}>Todos os usuários</option>
+            <option value="ativo"   {% if status == "ativo" %}selected{% endif %}>Ativos</option>
+            <option value="inativo" {% if status == "inativo" %}selected{% endif %}>Inativos</option>
+        </select>
+    </div>
+
+    <!-- Filtro por data -->
+    <div class="col-md-3">
+        <input type="date" name="data" class="form-control" value="{{ filtro_data }}">
+    </div>
+
+    <!-- Botões -->
+    <div class="col-md-1">
+        <button class="btn btn-primary w-100">Filtrar</button>
+    </div>
+
+    <div class="col-md-1">
+        <a href="." class="btn btn-secondary w-100">Limpar</a>
+    </div>
+
+</form>
+
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            Usuários aguardando ativação
+        </div>
+        <div class="card-body">
+
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuário</th>
+                        <th>Email</th>
+                        <th>Criado em</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+
+<tbody>
+{% for user in users %}
+<tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.date_joined|date:"d/m/Y H:i" }}</td>
+
+    <td class="text-end">
+
+        {% if user.is_active %}
+            <!-- Botão de inativar -->
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <button name="acao" value="inativar" class="btn btn-danger btn-sm">
+                    Inativar
+                </button>
+            </form>
+
+        {% else %}
+            <!-- Ativar -->
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <button name="acao" value="ativar" class="btn btn-success btn-sm">
+                    Ativar
+                </button>
+            </form>
+
+            <!-- Reenviar Email -->
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <button name="acao" value="reenviar_email" class="btn btn-warning btn-sm">
+                    Reenviar Email
+                </button>
+            </form>
+        {% endif %}
+
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">Nenhum usuário encontrado.</td>
+</tr>
+{% endfor %}
+</tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'painel_admin:admin_dashboard' %}" class="btn btn-dark btn-lg">📊 Ver Dashboard</a>
+    </div>
+
+</div>
+
+
+{% endblock %}
