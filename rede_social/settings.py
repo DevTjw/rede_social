@@ -46,9 +46,9 @@ INSTALLED_APPS = [
     'core',
     'usuarios',
     'mensagens',
-
+    'channels',
     # Celery (descomente se usar)
-    # 'django_celery_beat',
+    'django_celery_beat',
 ]
 
 # =====================================================================

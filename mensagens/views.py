@@ -39,7 +39,7 @@ def lista_usuarios(request):
     usuarios = usuarios.annotate(
         total_nao_lidas=Count(
             'mensagens_recebidas',
-            filter=Q(mensagens_recebidas__remetente=request.user, mensagens_recebidas__lida=False)
+            filter=Q(mensagens_recebidas__destinatario=request.user, mensagens_recebidas__lida=False)
         )
     )
 
@@ -47,56 +47,72 @@ def lista_usuarios(request):
 
 @login_required
 def iniciar_conversa(request, username):
-    return redirect('chat', username=username)
+    return redirect('chat', destinatario_username=username)
 
 @login_required
 def mensagens_dropdown(request):
-    if request.user.is_authenticated:
-        mensagens_agrupadas = (
-            Mensagem.objects.filter(Q(destinatario=request.user) | Q(remetente=request.user))
-            .exclude(remetente=request.user, destinatario=request.user)
-            .values("remetente__id", "remetente__username", "destinatario__id", "destinatario__username")
-            .annotate(
-                total=Count("id"),
-                nao_lidas=Count("id", filter=Q(lida=False, destinatario=request.user)),
-                ultima_data=Max("data_envio")
-            )
-            .order_by("-ultima_data")
+
+    mensagens_agrupadas = (
+        Mensagem.objects
+        .filter(Q(destinatario=request.user) | Q(remetente=request.user))
+        .exclude(remetente=request.user, destinatario=request.user)
+        .select_related("remetente__perfil", "destinatario__perfil")
+        .values(
+            "remetente__id", "remetente__username",
+            "destinatario__id", "destinatario__username"
+        )
+        .annotate(
+            total=Count("id"),
+            nao_lidas=Count("id", filter=Q(lida=False, destinatario=request.user)),
+            ultima_data=Max("data_envio")
+        )
+        .order_by("-ultima_data")
+    )
+
+    conversas = []
+    total_nao_lidas = 0
+
+    for m in mensagens_agrupadas:
+
+        # Descobrir quem é o "outro"
+        outro_id = (
+            m["remetente__id"]
+            if m["remetente__id"] != request.user.id
+            else m["destinatario__id"]
+        )
+        outro_username = (
+            m["remetente__username"]
+            if m["remetente__id"] != request.user.id
+            else m["destinatario__username"]
         )
 
-        conversas = []
-        total_nao_lidas = 0
+        try:
+            outro_user = User.objects.select_related("perfil").get(id=outro_id)
+            avatar_url = (
+                outro_user.perfil.foto_perfil.url
+                if outro_user.perfil.foto_perfil
+                else "https://via.placeholder.com/60"
+            )
+        except:
+            avatar_url = "https://via.placeholder.com/60"
 
-        for m in mensagens_agrupadas:
-            outro_id = m["remetente__id"] if m["remetente__id"] != request.user.id else m["destinatario__id"]
-            outro_username = m["remetente__username"] if m["remetente__id"] != request.user.id else m["destinatario__username"]
+        conversas.append({
+            "outro_id": outro_id,
+            "outro_username": outro_username,
+            "total": m["total"],
+            "nao_lidas": m["nao_lidas"],
+            "ultima_data": m["ultima_data"],
+            "avatar_url": avatar_url,
+        })
 
-            # Avatar
-            try:
-                outro_user = User.objects.get(id=outro_id)
-                avatar_url = outro_user.perfil.foto_perfil.url if outro_user.perfil.foto_perfil else "https://via.placeholder.com/60"
-            except Exception:
-                avatar_url = "https://via.placeholder.com/60"
+        total_nao_lidas += m["nao_lidas"]
 
-            conversa = {
-                "outro_id": outro_id,
-                "outro_username": outro_username,
-                "total": m["total"],
-                "nao_lidas": m["nao_lidas"],
-                "ultima_data": m["ultima_data"],
-                "avatar_url": avatar_url
-            }
+    return {
+        "conversas_dropdown": conversas,
+        "total_nao_lidas": total_nao_lidas,
+    }
 
-            conversas.append(conversa)
-            total_nao_lidas += m["nao_lidas"]
-
-        return {
-            "conversas_dropdown": conversas,
-            "total_nao_lidas": total_nao_lidas
-        }
-
-    return {}
-
+#========= CAIXA DE ENTRADA =========
 #=========
 @login_required
 def caixa_entrada(request):

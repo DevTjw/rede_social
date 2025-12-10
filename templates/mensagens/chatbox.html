@@ -1,41 +1,138 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h2>🧩 Sala: {{ chat_box_name }}</h2>
-
 <style>
+    :root {
+        /* Variáveis padrão (tema claro) */
+        --bg-color: #f5f5f5;
+        --text-color: #222;
+        --chat-bg: rgba(170, 170, 170, 0.288);
+        --msg-me-bg: linear-gradient(135deg, #00e0ff, #00ffa3);
+        --msg-other-bg: rgba(0, 0, 0, 0.05);
+        --btn-bg: linear-gradient(135deg, #00e0ff, #00ffa3);
+        --btn-text: #0f2027;
+    }
+
+    .dark-theme {
+        --bg-color: #0f2027;
+        --text-color: #f0f0f0;
+        --chat-bg: rgba(122, 122, 122, 0.05);
+        --msg-me-bg: linear-gradient(135deg, #00e0ff, #00ffa3);
+        --msg-other-bg: rgba(255, 255, 255, 0.15);
+        --btn-bg: linear-gradient(135deg, #00e0ff, #00ffa3);
+        --btn-text: #0f2027;
+    }
+
+    body {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    h2 {
+        text-align: center;
+        font-weight: 600;
+        color: #00e0ff;
+        text-shadow: 0 0 8px rgba(0, 224, 255, 0.7);
+        margin-bottom: 20px;
+    }
+
     #chat-box {
         height: 350px;
         overflow-y: auto;
-        border: 1px solid #ddd;
-        padding: 10px;
-        border-radius: 8px;
-        background: white;
+        border: none;
+        padding: 15px;
+        border-radius: 12px;
+        background: var(--chat-bg);
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 0 12px rgba(0, 224, 255, 0.3);
+        scroll-behavior: smooth;
+        transition: background 0.3s;
     }
+
     .msg {
-        margin-bottom: 10px;
-        padding: 8px;
-        border-radius: 6px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        border-radius: 12px;
         max-width: 70%;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        animation: fadeIn 0.3s ease-in-out;
     }
-    .me { background: #d9fdd3; margin-left: auto; }
-    .other { background: #ececec; }
+
+    .me {
+        background: var(--msg-me-bg);
+        color: var(--btn-text);
+        margin-left: auto;
+        box-shadow: 0 0 8px rgba(0, 224, 255, 0.6);
+    }
+
+    .other {
+        background: var(--msg-other-bg);
+        color: var(--text-color);
+        box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+    }
+
     #input-area {
         margin-top: 15px;
         display: flex;
         gap: 10px;
+        background: linear-gradient(135deg,#00ffa3, #f9fafa);
+    }
+
+    #mensagem {
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-color);
+        outline: none;
+        transition: background 0.3s;
+    }
+
+    #mensagem::placeholder {
+        color: #aaa;
+    }
+
+    #mensagem:focus {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    #btn-enviar {
+        background: var(--btn-bg);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--btn-text);
+        transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    #btn-enviar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(0, 224, 255, 0.7);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+        #chat-box { height: 250px; }
+        .msg { font-size: 0.85rem; }
+        #btn-enviar { padding: 8px 14px; }
     }
 </style>
+<h2>🧩 Sala: {{ remetente }} ↔ {{ destinatario }}</h2>
 
-<div id="chat-box">
-    {% for msg in mensagens %}
-        <div class="msg {% if msg.remetente == request.user %}me{% else %}other{% endif %}">
-            <strong>{{ msg.remetente.username }}:</strong><br>
-            {{ msg.conteudo }}
-        </div>
-    {% endfor %}
-</div>
+
+<div id="chat-box"></div>
 
 <div id="input-area">
     <input type="text" id="mensagem" placeholder="Digite uma mensagem..." class="form-control">
@@ -43,17 +140,20 @@
 </div>
 
 <script>
-const username = "{{ request.user.username }}";
+const username = "{{ remetente }}";
+const destinatario = "{{ destinatario }}";
 const chatBoxName = "{{ chat_box_name }}";
 
-const socket = new WebSocket(
-    "ws://" + window.location.host + "/ws/chat_box/{{ chat_box_name }}/"
-);
+// Detecta ws ou wss dependendo do protocolo
+const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+const socket = new WebSocket(ws_scheme + "://" + window.location.host + "/ws/chat/" + chatBoxName + "/");
 
+
+// Recebe mensagens do WebSocket
 socket.onmessage = function(e) {
     const data = JSON.parse(e.data);
 
-    if (data.type === "message" || data.type === "group_message") {
+    if (data.type === "chatbox_message") {
         const box = document.getElementById("chat-box");
         const div = document.createElement("div");
 
@@ -66,14 +166,24 @@ socket.onmessage = function(e) {
     }
 };
 
+// Envia mensagem ao WebSocket
 document.getElementById("btn-enviar").onclick = function() {
-    const msg = document.getElementById("mensagem").value;
+    const msg = document.getElementById("mensagem").value.trim();
+    if (!msg) return;
+
     socket.send(JSON.stringify({
         type: "message",
-        chat_box: chatBoxName,
+        destinatario: destinatario,
         message: msg
     }));
+
     document.getElementById("mensagem").value = "";
+};
+
+// Scroll inicial no final
+window.onload = function() {
+    const box = document.getElementById("chat-box");
+    box.scrollTop = box.scrollHeight;
 };
 </script>
 
