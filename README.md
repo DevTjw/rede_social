@@ -1,112 +1,128 @@
-📘 README.md — Rede Social Interna
+# 📘 **Rede Social Interna**
 
+Uma plataforma interna no estilo de rede social, com feeds personalizados, sistema de seguidores, troca de mensagens em tempo real (WebSockets) e perfis de usuários.
+Projetada para empresas, equipes e comunidades que precisam de comunicação rápida, organizada e centralizada.
 
-🚀 Rede Social Interna
-Plataforma interna no estilo de rede social, com feeds, seguidores, chats individuais em tempo real (WebSockets) e perfis de usuários.
-Ideal para empresas, times e comunidades que precisam de comunicação rápida, integrada e organizada.
+---
 
-📂 Funcionalidades Principais
+## 📂 **Funcionalidades Principais**
 
-🔐 Autenticação e Perfis
+### 🔐 Autenticação e Perfis
 
-Cadastro, login e logout
+* Cadastro, login e logout
+* Django Authentication integrado
+* Perfis totalmente personalizados
+* Controle de permissões (usuário, cliente, administrador)
 
-Django Authentication integrado
+---
 
-Perfis personalizados
+### 📰 Feed e Postagens
 
-Controle de permissões (usuário, cliente, admin)
-===============================================================================
-📰 Feed e Postagens
+* Criação de posts com texto, imagens e anexos
+* Curtidas e comentários
+* Feed baseado nos usuários seguidos
+* Página de exploração para descobrir novos perfis
 
-Criar posts com texto, imagens ou anexos
+---
 
-Comentar e curtir posts
+### 🤝 Sistema de Seguidores
 
-Feed baseado nos usuários seguidos
+* Seguir e deixar de seguir usuários
+* Feed dinâmico gerado a partir dos perfis acompanhados
+* Notificações internas (opcional)
 
-Página de exploração (descobrir novos usuários)
-===============================================================================
-🤝 Sistema de Seguidores
+---
 
-Seguir / deixar de seguir usuários
+### 💬 Mensagens Internas (Tempo Real)
 
-Feed construído a partir dos perfis seguidos
+* Chat individual entre usuários
+* Restrição opcional: apenas usuários conectados ou que se seguem
+* Suporte a WebSockets (**Django Channels**)
+* Histórico de mensagens salvo no banco
+* Indicação de status online/offline (opcional)
 
-Notificações internas (opcional)
-===============================================================================
-💬 Mensagens Internas (Tempo Real)
+---
 
-Chat individual entre usuários
+### 🧩 API + Front-end
 
-Mensagens só para usuários conectados ou que se seguem (configurável)
+* Views organizadas seguindo boas práticas
+* Templates responsivos com **Bootstrap 5**
+* Rotas limpas e padronizadas
+* API REST opcional com Django REST Framework
 
-Tempo real via Django Channels + WebSockets
+---
 
-Histórico salvo no banco
+## 🛠️ **Tecnologias Utilizadas**
 
-Indicação online/offline (opcional)
-===============================================================================
-🧩 API + Front-end
+| Componente                         | Detalhes                                         |
+| ---------------------------------- | ------------------------------------------------ |
+| **Framework**                      | Django 4+                                        |
+| **Linguagem**                      | Python 3.11 – 3.14                               |
+| **Banco de Dados**                 | SQLite (desenvolvimento) / PostgreSQL (produção) |
+| **WebSockets**                     | Django Channels                                  |
+| **Broker**                         | Redis                                            |
+| **Tarefas Assíncronas (opcional)** | Celery                                           |
+| **Frontend**                       | HTML, CSS, Bootstrap 5                           |
 
-Views organizadas
+---
 
-Templates Bootstrap 5
+## 📦 **Instalação e Configuração**
 
-Rotas limpas
+### 1) Clone o repositório
 
-API REST (opcional — DRF)
-===============================================================================
-🛠️ Tecnologias Utilizadas
-Componente	Detalhes
-Framework	Django 4+
-Linguagem	Python 3.11–3.14
-Banco	SQLite (dev) / PostgreSQL (prod)
-WebSockets	Django Channels
-Broker	Redis
-Tarefas Assíncronas (opcional)	Celery
-Frontend	HTML, CSS, Bootstrap 5
-
-===============================================================================
-📦 Instalação e Configuração
-1) Clone o repositório
+```bash
 git clone https://github.com/devtjw/rede-social.git
 cd rede-social-interna
+```
 
-2) Instale dependências
+### 2) Instale as dependências
+
+```bash
 pip install -r requirements.txt
+```
 
-3) Execute migrações
+### 3) Execute as migrações
+
+```bash
 python manage.py migrate
+```
 
-4) Inicie o servidor
+### 4) Inicie o servidor
+
+```bash
 python manage.py runserver
+```
 
-5) Caso use WebSockets (Channels)
+### 5) Caso utilize WebSockets (Channels)
+
+```bash
 daphne projeto.asgi:application
-===============================================================================
-📅 Roadmap
+```
 
- Sistema de notificações
+---
 
- Grupos / comunidades internas
+## 📅 **Roadmap**
 
- Chat em grupo
+* [ ] Sistema de notificações
+* [ ] Grupos / comunidades internas
+* [ ] Chats em grupo
+* [ ] Modo escuro
+* [ ] Upload de vídeos
+* [ ] API REST completa (DRF)
+* [ ] Testes automatizados
 
- Modo escuro
+---
 
- Upload de vídeos
+## 🧑‍💻 **Contribuições**
 
- API REST completa (DRF)
+Contribuições são bem-vindas!
+Para mudanças maiores, abra uma *issue* antes para discutirmos a proposta.
 
- Testes automatizados
-===============================================================================
-🧑‍💻 Contribuições
+---
 
-Pull requests são bem-vindos!
-Para grandes mudanças, abra uma issue primeiro.
+## 📜 **Licença**
 
-===============================================================================
-📜 Licença
+Distribuído sob a **MIT License**.
 
-MIT License.
+---
+
