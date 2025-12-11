@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen" />
+  <img src="https://img.shields.io/badge/Python-3.11_|_3.12_|_3.14-blue" />
+  <img src="https://img.shields.io/badge/Django-4+-0C4B33" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" />
+  <img src="https://img.shields.io/badge/WebSockets-Django%20Channels-orange" />
+  ==============================================================================
+</p>
+
+
 # 📘 **Rede Social Interna**
 
 Uma plataforma interna no estilo de rede social, com feeds personalizados, sistema de seguidores, troca de mensagens em tempo real (WebSockets) e perfis de usuários.
