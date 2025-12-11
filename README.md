@@ -1,10 +1,10 @@
 📘 README.md — Rede Social Interna
 
-================================================================
+
 🚀 Rede Social Interna
 Plataforma interna no estilo de rede social, com feeds, seguidores, chats individuais em tempo real (WebSockets) e perfis de usuários.
 Ideal para empresas, times e comunidades que precisam de comunicação rápida, integrada e organizada.
-================================================================
+
 📂 Funcionalidades Principais
 
 🔐 Autenticação e Perfis
