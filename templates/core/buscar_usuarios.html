@@ -78,6 +78,7 @@
         </div>
     </div>
 </div>
+{% block extra_css %}
 <script>
     document.addEventListener ('DOMContentLoaded', function () {
         const buttons = document.querySelectorAll('.follow-btn');
@@ -132,15 +133,14 @@
         }
  });
 </script>
-
-{% block extra_css %}
-
 {% endblock %}
+
+
 <hr>
-teste
+teste <br>
 ✔ Link para lista de usuários
 <a href="{% url 'mensagens:lista_usuarios' %}">Usuários</a>
-
+<br>
 ✔ Link para abrir um chat com outro usuário
 <a href="{% url 'mensagens:chat' destinatario_username=user.username %}">
     Conversar com {{ user.username }}

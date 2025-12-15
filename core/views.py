@@ -86,13 +86,11 @@ def erro_404(request, exception):
         'mensagem': 'A página que você está procurando não existe.'
     }, status=404)
 
-
 def erro_500(request):
     return render(request, 'erro.html', {
         'titulo': 'Erro interno do servidor (500)',
         'mensagem': 'Ocorreu um erro inesperado. Tente novamente mais tarde.'
     }, status=500)
-
 
 def erro_403(request, exception):
     return render(request, 'erro.html', {
@@ -100,13 +98,11 @@ def erro_403(request, exception):
         'mensagem': 'Você não tem permissão para acessar esta página.'
     }, status=403)
 
-
 def erro_400(request, exception):
     return render(request, 'erro.html', {
         'titulo': 'Requisição inválida (400)',
         'mensagem': 'A requisição não pôde ser entendida pelo servidor.'
     }, status=400)
-
 
 # ========== FEED E POSTS ==========
 
@@ -237,7 +233,6 @@ def adicionar_comentario(request, post_id):
 
     return JsonResponse({'success': False, 'error': 'Método inválido'})
 
-
 @login_required
 @require_POST
 def editar_comentario(request, comentario_id):
@@ -259,7 +254,6 @@ def editar_comentario(request, comentario_id):
         'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M')
     })
 
-
 @login_required
 @require_POST
 def excluir_comentario(request, comentario_id):
@@ -274,9 +268,7 @@ def excluir_comentario(request, comentario_id):
             'error': 'Você não tem permissão para excluir este comentário.'
         }, status=403)
 
-
 # ========== SUGESTÕES DE USUÁRIOS ==========
-
 @login_required
 def feed_sugestoes(request):
     try:

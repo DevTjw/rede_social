@@ -136,7 +136,7 @@ def register_view(request):
 
     return render(request, "registration/register.html", {"form": form})
 
-# 
+# confirmar email
 def confirmar_email_view(request, uidb64, token):
     try:
         # Decodifica o ID do usuário
@@ -215,7 +215,7 @@ def redefinir_senha(request, uidb64, token):
     else:
         return render(request, 'registration/redefinir_senha.html', {'valido': False})
     
-#
+# Dados pessoais
 @login_required
 def dados_pessoais_view(request):
     try:

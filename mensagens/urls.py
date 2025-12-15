@@ -14,8 +14,6 @@ urlpatterns = [
     path('chat/', views.lista_usuarios, name='lista_usuarios'),
     # Inicia um chat com outro usuário
     path('chat/<str:destinatario_username>/', views.chat_view, name='chat'),
-    # Nome diferente para a caixa de chat, se realmente necessário
-    path('chat_box/<str:chat_box_name>/', views.chat_view, name='chat_box'),
 
     # Conversa antiga ou privada (se for necessário manter)
     path('conversa/<str:username>/', views.conversa, name='conversa'),

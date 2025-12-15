@@ -1,0 +1,177 @@
+/* ========= BASE ========= */
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.inbox-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  min-height: 90vh;
+  padding: 40px 20px;
+  background: var(--bs-body-bg);
+  border-radius: 10px;
+  background: rgba(192, 192, 192, 0.507);
+}
+
+/* ========= CONTAINER ========= */
+.inbox-container {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s ease-in-out;
+  animation: fadeIn 0.6s ease-in-out;
+  overflow: hidden;
+}
+
+/* Tema claro */
+[data-bs-theme="light"] .inbox-container {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 30px rgba(13, 110, 253, 0.15);
+}
+
+/* Tema escuro */
+[data-bs-theme="dark"] .inbox-container {
+  background: rgba(10, 15, 25, 0.8);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+}
+
+/* ========= CABEÇALHO ========= */
+.inbox-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 25px 35px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="light"] .inbox-header {
+  color: #007bff;
+}
+[data-bs-theme="dark"] .inbox-header {
+  color: #00e5ff;
+}
+
+/* ========= LISTA DE CONVERSAS ========= */
+.conversation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+[data-bs-theme="light"] .conversation-item {
+  color: #212529;
+}
+[data-bs-theme="dark"] .conversation-item {
+  color: #f1f1f1;
+}
+
+.conversation-item:hover {
+  background: rgba(0, 229, 255, 0.1);
+  transform: translateX(5px);
+}
+
+/* ========= FOTO E INFORMAÇÕES ========= */
+.profile-pic-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.conversation-item:hover .profile-pic-sm {
+  border-color: #00e5ff;
+}
+
+.conversation-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-info strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.conversation-info small {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ========= BADGE NOVAS MENSAGENS ========= */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+[data-bs-theme="light"] .badge {
+  background: linear-gradient(90deg, #007bff, #00d4ff);
+}
+
+[data-bs-theme="dark"] .badge {
+  background: linear-gradient(90deg, #00e5ff, #007bff);
+  color: #000;
+}
+
+/* ========= SEM CONVERSAS ========= */
+.no-conversations {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+/* ========= BOTÃO ENVIAR ========= */
+.send-btn-wrapper {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.send-btn {
+  display: inline-block;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+[data-bs-theme="light"] .send-btn {
+  background: linear-gradient(90deg, #007bff, #00d4ff);
+  color: #fff;
+}
+[data-bs-theme="light"] .send-btn:hover {
+  background: linear-gradient(90deg, #00d4ff, #007bff);
+  transform: scale(1.03);
+}
+
+[data-bs-theme="dark"] .send-btn {
+  background: linear-gradient(90deg, #00ffff, #007bff);
+  color: #000;
+}
+[data-bs-theme="dark"] .send-btn:hover {
+  box-shadow: 0 0 15px #00ffff;
+  transform: scale(1.03);
+}
+
+/* ========= ANIMAÇÃO ========= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========= ATIVO ========= */
+.active-conv {
+  background: rgba(0, 255, 255, 0.15);
+}

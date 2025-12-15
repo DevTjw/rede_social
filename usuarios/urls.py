@@ -21,12 +21,12 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path("confirmar-email/<uidb64>/<token>/", views.confirmar_email_view, name="confirmar_email"),
     path("dados-pessoais/", views.dados_pessoais_view, name="dados_pessoais"),
-
-    path('pagamento/', views.editar_dados_pagamento, name='editar_dados_pagamento'),
     
+    path('pagamento/', views.editar_dados_pagamento, name='editar_dados_pagamento'),
+    # Login e Logout
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-
+    # Redefinição de senha
     path('redefinir-senha/', views.solicitar_redefinicao_senha, name='solicitar_redefinicao_senha'),
     path('redefinir-senha/<uidb64>/<token>/', views.redefinir_senha, name='redefinir_senha'),
 ]

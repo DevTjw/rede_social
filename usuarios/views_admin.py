@@ -40,6 +40,11 @@ def admin_ativacao_usuarios_view(request):
             messages.error(request, "Usuário não encontrado.")
             return redirect("painel_admin:admin_ativacao_usuarios")
 
+        # IMPEDIR DESATIVAÇÃO DE SUPERUSUÁRIO
+        if user.is_superuser and acao in ["inativar", "reenviar_email"]:
+            messages.error(request, "Superusuário não pode ser desativado ou ter e-mail de confirmação reenviado.")
+            return redirect("painel_admin:admin_ativacao_usuarios")
+
         # --- AÇÃO: ATIVAR ---
         if acao == "ativar":
             user.is_active = True

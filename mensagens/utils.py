@@ -27,7 +27,10 @@ def get_conversas(user):
 
         try:
             outro_user = User.objects.select_related("perfil").get(id=outro_id)
-            outro_foto = getattr(outro_user.perfil.foto_perfil, "url", None)
+            if outro_user.perfil.foto_perfil:
+                outro_foto = outro_user.perfil.foto_perfil.url
+            else:
+                outro_foto = None
         except (User.DoesNotExist, AttributeError):
             outro_foto = None
 

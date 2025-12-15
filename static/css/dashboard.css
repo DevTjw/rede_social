@@ -1,0 +1,324 @@
+/* =======================
+   PAINEL.CSS - ESTILO PROFISSIONAL FUTURISTA
+   ======================= */
+
+/* ----- VARIÁVEIS DE CORES PROFISSIONAIS ----- */
+:root {
+  --cor-primaria: #2563eb;
+  --cor-primaria-hover: #1d4ed8;
+  --cor-secundaria: #64748b;
+  --cor-sucesso: #10b981;
+  --cor-fundo-claro: #f8fafc;
+  --cor-fundo-escuro: #0f172a;
+  --cor-card-claro: #ffffff;
+  --cor-card-escuro: #1e293b;
+  --cor-texto-claro: #334155;
+  --cor-texto-escuro: #e2e8f0;
+  --cor-borda-claro: #e2e8f0;
+  --cor-borda-escuro: #334155;
+  --cor-destaque: #06b6d4;
+  --sombra-suave: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --sombra-destaque: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ----- MODO ESCURO ----- */
+[data-theme="dark"] {
+  --cor-fundo: var(--cor-fundo-escuro);
+  --cor-texto: var(--cor-texto-escuro);
+  --cor-card: var(--cor-card-escuro);
+  --cor-borda: var(--cor-borda-escuro);
+}
+
+[data-theme="light"], :root {
+  --cor-fundo: var(--cor-fundo-claro);
+  --cor-texto: var(--cor-texto-claro);
+  --cor-card: var(--cor-card-claro);
+  --cor-borda: var(--cor-borda-claro);
+}
+
+/* ----- BASE E TIPOGRAFIA ----- */
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* ----- CABEÇALHO DO PERFIL ----- */
+.perfil-header {
+  background: linear-gradient(135deg, var(--cor-card) 0%, rgba(37, 99, 235, 0.05) 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--cor-borda);
+  backdrop-filter: blur(10px);
+}
+
+.perfil-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--cor-primaria);
+  box-shadow: var(--sombra-suave);
+}
+
+.perfil-info h4 {
+  color: var(--cor-texto);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.perfil-bio {
+  color: var(--cor-secundaria);
+  font-size: 0.95rem;
+}
+
+/* ----- ESTATÍSTICAS ----- */
+.estatisticas-container {
+  background: var(--cor-card);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-suave);
+}
+
+.estatisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.estatistica-item {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(100, 116, 139, 0.05) 100%);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+  border: 1px solid var(--cor-borda);
+  transition: all 0.3s ease;
+}
+
+.estatistica-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-destaque);
+}
+
+.estatistica-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  display: block;
+}
+
+.estatistica-label {
+  font-size: 0.85rem;
+  color: var(--cor-secundaria);
+  margin-top: 0.5rem;
+}
+
+/* ----- CARDS MODERNOS ----- */
+.card-moderno {
+  background: var(--cor-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--sombra-suave);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.card-moderno:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-destaque);
+}
+
+.card-titulo {
+  color: var(--cor-texto);
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  font-size: 1.25rem;
+  border-bottom: 2px solid var(--cor-primaria);
+  padding-bottom: 0.5rem;
+}
+
+/* ----- LISTA DE CONVERSAS ----- */
+.conversas-lista {
+  background: var(--cor-card);
+  border-radius: 1rem;
+  border: 1px solid var(--cor-borda);
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+}
+
+.conversa-item {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--cor-borda);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.conversa-item:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.conversa-item:last-child {
+  border-bottom: none;
+}
+
+.conversa-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.conversa-info {
+  flex: 1;
+}
+
+.conversa-nome {
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 0.25rem;
+}
+
+.conversa-meta {
+  font-size: 0.85rem;
+  color: var(--cor-secundaria);
+}
+
+.badge-notificacao {
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-destaque));
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ----- BOTÕES ----- */
+.btn-moderno {
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-destaque));
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--sombra-suave);
+}
+
+.btn-moderno:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-destaque);
+  background: linear-gradient(135deg, var(--cor-primaria-hover), var(--cor-destaque));
+  color: white;
+}
+
+.btn-secundario {
+  background: var(--cor-secundaria);
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  color: white;
+  font-weight: 600;
+}
+
+/* ----- IMAGENS ----- */
+.imagem-post {
+  border-radius: 0.75rem;
+  max-height: 300px;
+  object-fit: cover;
+  width: 100%;
+  margin: 1rem 0;
+  box-shadow: var(--sombra-suave);
+}
+
+/* ----- LAYOUT RESPONSIVO ----- */
+@media (max-width: 992px) {
+  .estatisticas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .perfil-header {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .estatisticas-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .perfil-header {
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .card-moderno {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .estatistica-item {
+    padding: 1rem;
+  }
+  
+  .conversa-item {
+    padding: 1rem;
+  }
+  
+  .btn-moderno {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ----- ANIMAÇÕES ----- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-moderno, .estatistica-item, .conversa-item {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ----- ESTADO VAZIO ----- */
+.estado-vazio {
+  text-align: center;
+  padding: 2rem;
+  color: var(--cor-secundaria);
+  font-style: italic;
+}
+
+.estado-vazio i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--cor-borda);
+}

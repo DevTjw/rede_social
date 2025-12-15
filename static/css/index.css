@@ -1,0 +1,238 @@
+
+    /* ===== ESTILO BASE ===== */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top left, #8ae2ff, #fafbfc, #8ae2ff);
+      transition: background 0.5s ease;
+      font-family: "Segoe UI", sans-serif;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    /* ===== NAVBAR FUTURISTA ===== */
+    .glass-navbar {
+      background: rgba(0, 0, 0, 0.4) !important;
+      backdrop-filter: blur(15px) saturate(180%);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand.neon-text {
+      color: #00ffff !important;
+      text-shadow: 0 0 8px #00ffff, 0 0 15px #0088ff;
+      letter-spacing: 1px;
+      transition: 0.3s ease;
+    }
+
+    .navbar-brand.neon-text:hover {
+      color: #ff00ff !important;
+      text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff0088;
+    }
+
+    .nav-link {
+      color: #d0faff !important;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #00ffff !important;
+      text-shadow: 0 0 6px #00ffff;
+    }
+
+    .dropdown-glass {
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+      animation: dropdownFade 0.3s ease;
+    }
+
+
+    @keyframes dropdownFade {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-pic-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Tema escuro */
+    [data-bs-theme="dark"] body {
+      background-color: var(--dark-bg);
+      color: #e2e8f0;
+      background-image: linear-gradient(to bottom right, #0a0a1a, #0f172a);
+    }
+
+    [data-bs-theme="dark"] .navbar {
+      background: rgba(0, 0, 0, 0.616) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-md);
+      border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+    }
+
+    [data-bs-theme="dark"] .card {
+      background-color: var(--dark-card);
+      border: 1px solid rgba(0, 217, 255, 0.15);
+      color: #e2e8f0;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(5px);
+    }
+
+    [data-bs-theme="dark"] .form-control {
+      background-color: rgba(26, 36, 56, 0.7);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      color: #e2e8f0;
+      transition: var(--transition);
+    }
+
+    [data-bs-theme="dark"] .form-control:focus {
+      background-color: rgba(26, 36, 56, 0.9);
+      border-color: var(--accent-color);
+      color: #e2e8f0;
+      box-shadow: 0 0 0 0.25rem rgba(0, 217, 255, 0.25);
+    }
+
+    [data-bs-theme="dark"] .dropdown-menu {
+      background-color: rgba(30, 30, 60, 0.95);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    [data-bs-theme="dark"] .dropdown-item {
+      color: #e2e8f0;
+      transition: var(--transition);
+    }
+
+    [data-bs-theme="dark"] .dropdown-item:hover {
+      background-color: rgba(0, 217, 255, 0.15);
+      color: var(--accent-color);
+    }
+
+
+    /* ===== CONTAINER DO MENU ===== */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 25px;
+      max-width: 600px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px) saturate(160%);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.25);
+      animation: fadeIn 1s ease forwards;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== ITEM DO MENU ===== */
+    .menu-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(145deg, #ffffff, #1c1c1c);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .menu-item:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+      background: linear-gradient(145deg, #00ffff22, #ff00ff22);
+    }
+
+    .menu-item img {
+      max-width: 65%;
+      max-height: 65%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px #00ffff);
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .menu-item:hover img {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 10px #ff00ff);
+    }
+
+    .menu-title {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.95rem;
+      color: #00ffff;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* ===== ANIMAÇÕES ===== */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 600px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+
+      .menu-title {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* ===== LINKS ===== */
+    .menu-item a {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+    }
+
+    /* ===== TEMA ESCURO ===== */
+    [data-bs-theme="dark"] body {
+      background: radial-gradient(circle at bottom right, #000, #111, #1a1a1a);
+    }
+
+    [data-bs-theme="dark"] .menu-grid {
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.15);
+    }
+
+    [data-bs-theme="dark"] .menu-item {
+      background: linear-gradient(145deg, #1b1b1b, #2a2a2a);
+    }
+
+    [data-bs-theme="dark"] .menu-item img {
+      filter: drop-shadow(0 0 6px #ffffff);
+    }
