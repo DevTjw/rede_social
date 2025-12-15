@@ -1,34 +1,138 @@
-# rede_social
-🚀 Rede Social / interna com funcionalidade basica mais funcional / 
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen" />
+  <img src="https://img.shields.io/badge/Python-3.11_|_3.12_|_3.14-blue" />
+  <img src="https://img.shields.io/badge/Django-4+-0C4B33" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" />
+  <img src="https://img.shields.io/badge/WebSockets-Django%20Channels-orange" />
+  ==============================================================================
+</p>
+
+
+# 📘 **Rede Social Interna**
+
+Uma plataforma interna no estilo de rede social, com feeds personalizados, sistema de seguidores, troca de mensagens em tempo real (WebSockets) e perfis de usuários.
+Projetada para empresas, equipes e comunidades que precisam de comunicação rápida, organizada e centralizada.
 
 ---
 
 ## 📂 **Funcionalidades Principais**
 
-### 🔐 Autenticação
-- Login e logout
-- Cadastro de usuários
-- Permissões por tipo (cliente, admin)
+### 🔐 Autenticação e Perfis
 
+* Cadastro, login e logout
+* Django Authentication integrado
+* Perfis totalmente personalizados
+* Controle de permissões (usuário, cliente, administrador)
 
-### 📱 API / Front-end
-- Views organizadas
-- Templates com Bootstrap
-- Rotas limpas e sem duplicação
+---
+
+### 📰 Feed e Postagens
+
+* Criação de posts com texto, imagens e anexos
+* Curtidas e comentários
+* Feed baseado nos usuários seguidos
+* Página de exploração para descobrir novos perfis
+
+---
+
+### 🤝 Sistema de Seguidores
+
+* Seguir e deixar de seguir usuários
+* Feed dinâmico gerado a partir dos perfis acompanhados
+* Notificações internas (opcional)
+
+---
+
+### 💬 Mensagens Internas (Tempo Real)
+
+* Chat individual entre usuários
+* Restrição opcional: apenas usuários conectados ou que se seguem
+* Suporte a WebSockets (**Django Channels**)
+* Histórico de mensagens salvo no banco
+* Indicação de status online/offline (opcional)
+
+---
+
+### 🧩 API + Front-end
+
+* Views organizadas seguindo boas práticas
+* Templates responsivos com **Bootstrap 5**
+* Rotas limpas e padronizadas
+* API REST opcional com Django REST Framework
 
 ---
 
 ## 🛠️ **Tecnologias Utilizadas**
 
-| Componente | Versão / Tecnologia |
-|-----------|---------------------|
-| Django | 4+ |
-| Python | 3.11+ / 3.12+ / 3.14+ |
-| SQLite ou PostgreSQL | Suportado |
-| Celery | (opcional, caso ativado) |
-| Redis | (opcional) |
-| Bootstrap | 5 |
+| Componente                         | Detalhes                                         |
+| ---------------------------------- | ------------------------------------------------ |
+| **Framework**                      | Django 4+                                        |
+| **Linguagem**                      | Python 3.11 – 3.14                               |
+| **Banco de Dados**                 | SQLite (desenvolvimento) / PostgreSQL (produção) |
+| **WebSockets**                     | Django Channels                                  |
+| **Broker**                         | Redis                                            |
+| **Tarefas Assíncronas (opcional)** | Celery                                           |
+| **Frontend**                       | HTML, CSS, Bootstrap 5                           |
 
 ---
 
 ## 📦 **Instalação e Configuração**
+
+### 1) Clone o repositório
+
+```bash
+git clone https://github.com/devtjw/rede-social.git
+cd rede-social-interna
+```
+
+### 2) Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3) Execute as migrações
+
+```bash
+python manage.py migrate
+```
+
+### 4) Inicie o servidor
+
+```bash
+python manage.py runserver
+```
+
+### 5) Caso utilize WebSockets (Channels)
+
+```bash
+daphne projeto.asgi:application
+```
+
+---
+
+## 📅 **Roadmap**
+
+* [ ] Sistema de notificações
+* [ ] Grupos / comunidades internas
+* [ ] Chats em grupo
+* [ ] Modo escuro
+* [ ] Upload de vídeos
+* [ ] API REST completa (DRF)
+* [ ] Testes automatizados
+
+---
+
+## 🧑‍💻 **Contribuições**
+
+Contribuições são bem-vindas!
+Para mudanças maiores, abra uma *issue* antes para discutirmos a proposta.
+
+---
+
+## 📜 **Licença**
+
+Distribuído sob a **MIT License**.
+
+---
+
