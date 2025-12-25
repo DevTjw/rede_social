@@ -1,6 +1,8 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
+
+{% block content %}
+
 <head>
     <meta charset="UTF-8">
     <title>{{ post.autor.username }} · Post</title>
@@ -41,15 +43,6 @@
 
         * {
             box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Inter', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            padding: 24px;
         }
 
         .container {
@@ -178,10 +171,49 @@
                 max-height: 360px;
             }
         }
+
+        .invite-box {
+    margin-top: 20px;
+    padding: 16px;
+    border-top: 1px solid #e5e5e5;
+    text-align: center;
+    background: #fafafa;
+}
+
+.invite-text {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.invite-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #4f46e5;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.invite-button:hover {
+    background-color: #4338ca;
+}
+
+.invite-login {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.invite-login a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
     </style>
 </head>
 
-<body>
+
 <div class="container">
     <article class="card">
 
@@ -211,7 +243,25 @@
                 <img src="{{ post.imagem_share.url }}" class="post-image" alt="Imagem do post">
             {% endif %}
         </section>
+        {% if not request.user.is_authenticated %}
 
+<div class="invite-box">
+    <p class="invite-text">
+        Gostou do conteúdo?  
+        <strong>Crie uma conta grátis</strong> e participe da comunidade 🚀
+    </p>
+<!-- Usuário não logado: exibe opções de login e registro -->
+    <a href="{% url 'register' %}" class="invite-button">
+        Criar conta
+    </a>
+
+    <p class="invite-login">
+        Já tem conta?
+        <a href="{% url 'login' %}">Entrar</a>
+    </p>
+</div>
+    <!-- convite aqui -->
+{% endif %}
 <footer class="footer">
     <div class="footer-inner">
         <a href="{% url 'core:feed' %}" class="feed-link">
@@ -230,5 +280,5 @@
 
     </article>
 </div>
-</body>
-</html>
+
+{% endblock %}

@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 <head>
-    <title>{% block title %}SocialNet{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/feed.css' %}">
 </head>
 {% include "mensagens/flutuante.html" %}
@@ -155,10 +154,13 @@
                     </a>
                     </li>
                     <li>
-                    <a class="dropdown-item" target="_blank" title="Compartilhar este post pelo WhatsApp"
-                        href="https://wa.me/?text={{ 'Veja esse post:'|urlencode }}%20{{ request.build_absolute_uri|urlencode }}">
+                    <a class="dropdown-item"
+                    target="_blank"
+                    title="Compartilhar este post pelo WhatsApp"
+                    href="https://wa.me/?text={{ 'Veja esse post:'|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'core:post_detail' post.id %}">
                         <i class="fab fa-whatsapp"></i> WhatsApp
                     </a>
+
                     </li>
                 </ul>
                 </div>
