@@ -39,7 +39,7 @@ __pycache__/
 # ========================
 uploads/
 inf/
-media/
+
 # ========================
 # Arquivos estáticos coletados
 # ========================
@@ -104,3 +104,4 @@ Thumbs.db
 # ========================
 .hintrc
 .env
+.gitignore
