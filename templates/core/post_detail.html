@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.autor.username }} · Post</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Post de {{ post.autor.username }}">
+    <meta property="og:description" content="{{ post.conteudo|truncatechars:120 }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="article">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    {% if post.imagem_share %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.imagem_share.url }}">
+    {% elif post.imagem %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.imagem.url }}">
+    {% else %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/share-default.jpg' }}">
+    {% endif %}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Fonte elegante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e5e7eb;
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 22px 26px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .author {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .meta {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            padding: 26px;
+            font-size: 17px;
+        }
+
+        .content p {
+            margin-top: 0;
+            white-space: pre-wrap;
+        }
+
+        /* ===== IMAGE ===== */
+        .post-image {
+            width: 100%;
+            display: block;
+            max-height: 520px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin: 24px 0;
+        }
+
+        /* ===== FOOTER ===== */
+.footer {
+    padding: 16px 26px;
+    background: linear-gradient(to top, #f8fafc, #ffffff);
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.feed-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.feed-link:hover {
+    background: rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.feed-icon {
+    font-size: 16px;
+}
+
+.footer-meta {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            body {
+                padding: 14px;
+            }
+
+            .content {
+                font-size: 16px;
+                padding: 22px;
+            }
+
+            .post-image {
+                max-height: 360px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <article class="card">
+
+        <!-- Header -->
+        <header class="header">
+            {% if post.autor.perfil.foto_perfil %}
+                <img src="{{ post.autor.perfil.foto_perfil.url }}" class="avatar" alt="Avatar">
+            {% elif post.autor.avatar %}
+                <img src="{{ post.autor.avatar.url }}" class="avatar" alt="Avatar">
+            {% else %}
+                <img src="{% static 'img/avatar-default.png' %}" class="avatar" alt="Avatar">
+            {% endif %}
+
+            <div>
+                <div class="author">{{ post.autor.username }}</div>
+                <div class="meta">Post compartilhado</div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <section class="content">
+            <p>{{ post.conteudo }}</p>
+
+            {% if post.imagem %}
+                <img src="{{ post.imagem.url }}" class="post-image" alt="Imagem do post">
+            {% elif post.imagem_share %}
+                <img src="{{ post.imagem_share.url }}" class="post-image" alt="Imagem do post">
+            {% endif %}
+        </section>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <a href="{% url 'core:feed' %}" class="feed-link">
+            <span class="feed-icon">📰</span>
+            Ver feed
+        </a>
+
+        <span class="footer-meta">
+        <a href="http://{{ request.get_host }}" class="feed-link">
+            Compartilhado via <span class="host-name">{{ request.get_host }}</span>
+        </a>
+        </span>
+    </div>
+</footer>
+
+
+    </article>
+</div>
+</body>
+</html>

@@ -23,6 +23,7 @@ class Post(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     conteudo = models.TextField(max_length=1000)
     imagem = models.ImageField(upload_to=caminho_imagem_post, blank=True, null=True)
+    imagem_share = models.ImageField(upload_to="posts_share/", blank=True, null=True)
     data_criacao = models.DateTimeField(default=timezone.now)
     curtidas = models.ManyToManyField(User, related_name='curtidas', blank=True)
 

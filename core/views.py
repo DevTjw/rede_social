@@ -13,7 +13,12 @@ from django.shortcuts import render
 from usuarios.utils import get_perfil_data
 from mensagens.utils import get_conversas
 from mensagens.models import Mensagem
-
+from django.core.files import File
+from django.conf import settings
+import os
+from .utils import gerar_imagem_post
+from django.urls import reverse
+from django.contrib import messages
 
 # ========== PÁGINA INICIAL ==========
 def index(request):
@@ -200,6 +205,143 @@ def curtir_post(request, post_id):
         'like_count': post.curtidas.count()
     })
 
+
+# ========== PREPARAR IMAGEM DE COMPARTILHAMENTO ==========
+@login_required
+def preparar_compartilhamento(request, post_id):
+    '''
+    Docstring para preparar_compartilhamento
+    :param request: 
+    :param post_id: Descrição
+    :return: JsonResponse com sucesso e URL do post
+    '''
+    post = get_object_or_404(Post, id=post_id)
+
+    if not post.imagem_share:
+        caminho_relativo = gerar_imagem_post(post)
+        caminho_absoluto = os.path.join(settings.MEDIA_ROOT, caminho_relativo)
+
+        with open(caminho_absoluto, "rb") as f:
+            post.imagem_share.save(
+                os.path.basename(caminho_absoluto),
+                File(f),
+                save=True
+            )
+
+    return JsonResponse({
+        "success": True,
+        "url": request.build_absolute_uri(
+            reverse("core:post_detail", args=[post.id])
+        )
+    })
+
+# ========== COMPARTILHAR POST ==========
+@login_required
+def compartilhar_post(request, id):
+    '''
+    Docstring para compartilhar_post
+    
+    :param request: Descrição
+    :param id: Descrição
+    '''
+    post = get_object_or_404(Post, id=id, autor=request.user)
+
+    if not post.imagem_share:
+        caminho_relativo = gerar_imagem_post(post)
+        caminho_absoluto = os.path.join(settings.MEDIA_ROOT, caminho_relativo)
+
+        with open(caminho_absoluto, "rb") as f:
+            post.imagem_share.save(
+                os.path.basename(caminho_absoluto),
+                File(f),
+                save=True
+            )
+
+    return redirect("post_detail", id=post.id)
+
+# =========== Post publica ================
+def post_detail(request, id):
+    post = get_object_or_404(Post, id=id)
+    return render(request, 'core/post_detail.html', {'post': post})
+
+# ========== COMPARTILHAR POST VIA NOTIFICAÇÃO interna ==========
+def garantir_imagem_share(post):
+    """
+    Garante que o post tenha imagem para compartilhamento.
+    Prioridade:
+    1️⃣ Imagem original do post
+    2️⃣ Imagem gerada automaticamente
+    """
+
+    # 🔹 Se o post JÁ TEM imagem, usa ela direto
+    if post.imagem:
+        return post.imagem.url
+
+    # 🔹 Caso contrário, gera imagem de compartilhamento
+    if not post.imagem_share:
+        from core.utils import gerar_imagem_post
+        import os
+        from django.conf import settings
+        from django.core.files import File
+
+        caminho_relativo = gerar_imagem_post(post)
+        caminho_absoluto = os.path.join(settings.MEDIA_ROOT, caminho_relativo)
+
+        with open(caminho_absoluto, "rb") as f:
+            post.imagem_share.save(
+                os.path.basename(caminho_absoluto),
+                File(f),
+                save=True
+            )
+
+    return post.imagem_share.url
+
+@login_required
+def notificar_post(request, post_id, username):
+    from django.urls import reverse
+    from django.shortcuts import get_object_or_404
+    from django.http import JsonResponse
+    from core.models import Post
+    from mensagens.models import Mensagem
+    from django.contrib.auth.models import User
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    post = get_object_or_404(Post, id=post_id)
+    destinatario = get_object_or_404(User, username=username)
+    remetente = request.user
+
+    if destinatario == remetente:
+        return JsonResponse({'error': 'Você não pode enviar mensagem para si mesmo.'}, status=400)
+
+    # 🔹 Garante imagem de compartilhamento
+    imagem_url = garantir_imagem_share(post)
+
+    # 🔹 URL absoluta para o post
+    post_url = request.build_absolute_uri(
+        reverse("core:post_detail", args=[post.id])
+    )
+
+    # 🔹 Conteúdo da mensagem com preview HTML
+    conteudo_html = f"""
+<div class="post-box">
+    <h4>📢 {remetente.username} compartilhou um post com você</h4>
+    <img src="{imagem_url}" style="width:100%;max-width:480px;border-radius:12px;margin-bottom:10px;">
+    <p>📝 {getattr(post, 'titulo', 'Post compartilhado')}</p>
+    <a href="{post_url}" class="btn btn-primary" target="_blank">🔗 Ver post</a>
+</div>
+"""
+
+    # 🔹 Cria a mensagem interna
+    Mensagem.objects.create(
+        remetente=remetente,
+        destinatario=destinatario,
+        conteudo=conteudo_html
+    )
+
+    return JsonResponse({'success': True})
+ 
 
 # ========== COMENTÁRIOS ==========
 @login_required

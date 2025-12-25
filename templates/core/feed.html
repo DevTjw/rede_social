@@ -126,11 +126,42 @@
                         aria-controls="comments-{{ post.id }}">
                         <i class="far fa-comment"></i> Comentar
                     </button>&nbsp;
+<!-- Compartilhar -->
+                <!-- Dropdown Compartilhar do Post -->
+                <div class="dropdown post-dropdown">
+                <button 
+                    class="btn btn-sm btn-outline-primary dropdown-toggle" 
+                    type="button" 
+                    id="dropdownCompartilhar{{ post.id }}" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    title="Clique para ver opções de compartilhamento">
+                    <i class="far fa-share-square"></i> Compartilhar
+                </button>
+                
+                <ul class="dropdown-menu" aria-labelledby="dropdownCompartilhar{{ post.id }}">
 
-                    <!-- Compartilhar -->
-                    <button class="btn btn-sm btn-outline-primary">
-                        <i class="far fa-share-square"></i> Compartilhar
-                    </button>
+                    <li>
+                    <a class="dropdown-item" href="javascript:void(0);" 
+                        data-post-id="{{ post.id }}" title="Abrir modal para compartilhar este post aqui com outros contatos"
+                        onclick="abrirModalCompartilhar(this)">
+                        <i class="far fa-share-square"></i> Contatos
+                    </a>
+                    </li>
+                    <li>
+                    <a class="dropdown-item" href="javascript:void(0);" onclick="prepararECompartilhar('{{ post.id }}')"
+                    title="Preparar o post e compartilhar em outras redes sociais">
+                        <i class="far fa-share-square"></i> APPs
+                    </a>
+                    </li>
+                    <li>
+                    <a class="dropdown-item" target="_blank" title="Compartilhar este post pelo WhatsApp"
+                        href="https://wa.me/?text={{ 'Veja esse post:'|urlencode }}%20{{ request.build_absolute_uri|urlencode }}">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    </li>
+                </ul>
+                </div>
 
                 </div>
                 <!-- =======================
@@ -270,6 +301,39 @@
                 </div>
             </div>
         </div>
+
+ <!-- =======================
+    Modal de Compartilhamento de Post
+ ======================== -->
+<div class="modal fade" id="modalCompartilharPost" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">📤 Compartilhar post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+<input type="text" id="buscaUsuario" class="form-control" placeholder="Buscar usuário...">
+<ul id="resultadoUsuarios" class="list-group mt-2"></ul>
+<input type="hidden" id="usuarioSelecionado">
+<input type="hidden" id="postIdCompartilhar">
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmarCompartilhamento()">
+          🔔 Enviar notificação
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
         {% empty %}
         <!-- Caso não existam posts -->
         <div class="card">
@@ -726,6 +790,160 @@ document.addEventListener('click', function(event) {
         excluirComentario(comentarioId, btn);
     }
 });
+
+</script>
+
+<!-- =======================
+ SCRIPT: Compartilhar post via Web Share API
+ ======================= -->
+<script>
+async function prepararECompartilhar(postId) {
+    try {
+        const response = await fetch(
+            `/core/post/${postId}/preparar-share/`,
+            {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert("Erro ao preparar compartilhamento");
+            return;
+        }
+
+        const url = data.url;
+        const texto = "Achei esse conteúdo muito interessante. Vale a pena conferir 👇";
+
+        if (navigator.share) {
+            navigator.share({
+                title: "Veja este post",
+                text: texto,
+                url: url
+            });
+        } else {
+            navigator.clipboard.writeText(url);
+            alert("Link copiado! Agora é só colar e compartilhar 😉");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Erro ao compartilhar");
+    }
+}
+</script>
+
+<!-- =======================
+ SCRIPT: Compartilhar post com notificação interna
+ ======================= -->
+<script>
+let modalCompartilhar;
+let debounceTimer;
+
+document.addEventListener('DOMContentLoaded', () => {
+    modalCompartilhar = new bootstrap.Modal(
+        document.getElementById('modalCompartilharPost')
+    );
+
+    document.getElementById('buscaUsuario')
+        .addEventListener('input', buscarUsuarios);
+});
+
+function abrirModalCompartilhar(button) {
+    document.getElementById('postIdCompartilhar').value =
+        button.getAttribute('data-post-id');
+
+    document.getElementById('buscaUsuario').value = '';
+    document.getElementById('resultadoUsuarios').innerHTML = '';
+    document.getElementById('usuarioSelecionado').value = '';
+
+    modalCompartilhar.show();
+}
+
+function buscarUsuarios(e) {
+    const q = e.target.value.trim();
+    clearTimeout(debounceTimer);
+
+    if (q.length < 2) {
+        document.getElementById('resultadoUsuarios').innerHTML = '';
+        return;
+    }
+
+    debounceTimer = setTimeout(() => {
+        fetch(`/mensagens/buscar_seguidores_post/?q=${encodeURIComponent(q)}`)
+            .then(r => r.json())
+            .then(renderizarResultados);
+    }, 300);
+}
+
+function renderizarResultados(usuarios) {
+    const lista = document.getElementById('resultadoUsuarios');
+    lista.innerHTML = '';
+
+    if (!usuarios.length) {
+        lista.innerHTML = `<li class="list-group-item text-muted">Nenhum usuário encontrado</li>`;
+        return;
+    }
+
+    usuarios.forEach(u => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item list-group-item-action';
+        li.innerHTML = `
+          <div class="d-flex align-items-center">
+            <img src="${u.imagem_url}"
+                 style="width:32px;height:32px;border-radius:50%;margin-right:10px;">
+            <strong>${u.nome}</strong>
+            <span class="text-muted ms-2">@${u.username}</span>
+          </div>`;
+        li.onclick = () => selecionarUsuario(u);
+        lista.appendChild(li);
+    });
+}
+
+function selecionarUsuario(usuario) {
+    document.getElementById('usuarioSelecionado').value = usuario.username;
+    document.getElementById('resultadoUsuarios').innerHTML = `
+      <li class="list-group-item active">
+        ✅ ${usuario.nome} (@${usuario.username})
+      </li>`;
+}
+
+function confirmarCompartilhamento() {
+    const postId = document.getElementById('postIdCompartilhar').value;
+    const username = document.getElementById('usuarioSelecionado').value;
+
+    if (!username) {
+        alert('Selecione um usuário');
+        return;
+    }
+
+    fetch(`/core/post/${postId}/notificar/${username}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(r => {
+        if (r.ok) {
+            modalCompartilhar.hide();
+            alert('✅ Post compartilhado!');
+        } else {
+            alert('❌ Erro ao compartilhar');
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(c.substring(name.length + 1));
+        }
+    });
+    return cookieValue;
+}
 
 </script>
 

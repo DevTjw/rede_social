@@ -219,3 +219,27 @@ MESSAGE_TAGS = {
 }
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+
+
+# ===============================
+# 📟 Configurações de Log
+# ===============================
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.server": {
+            "handlers": ["console"],
+            "level": "ERROR",
+        },
+    },
+}
+# ===============================
+# FIM DO ARQUIVO settings.py
+# ===============================

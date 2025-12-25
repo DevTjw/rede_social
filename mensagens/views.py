@@ -344,3 +344,32 @@ def mensagem_editar(request, id):
         "data_envio": msg.data_envio.strftime("%d/%m/%Y %H:%M"),
         "editado": True
     })
+
+# =====================================================
+# BUSCAR SEGUIDORES PARA compartilhar post em app core
+@login_required
+def buscar_seguidores_post(request):
+    q = request.GET.get('q', '').strip()
+    if not q:
+        return JsonResponse([], safe=False)
+
+    perfil_atual = request.user.perfil
+
+    seguidores_qs = perfil_atual.seguidores.filter(
+        username__icontains=q
+    ).select_related('perfil')[:10]
+
+    data = []
+    for u in seguidores_qs:
+        perfil = getattr(u, 'perfil', None)
+        data.append({
+            'username': u.username,
+            'nome': u.get_full_name() or u.username,
+            'imagem_url': (
+                perfil.foto_perfil.url
+                if perfil and perfil.foto_perfil
+                else '/static/images/default-profile.png'
+            ),
+        })
+
+    return JsonResponse(data, safe=False)

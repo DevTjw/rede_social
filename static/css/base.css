@@ -129,7 +129,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Componentes comuns */
 .navbar {
-    padding: 0.8rem 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
     transition: var(--transition);
     z-index: 1000;
 }

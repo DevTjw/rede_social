@@ -26,4 +26,15 @@ urlpatterns = [
 
     # Teste de erro
     path('erro-test/', lambda request: views.generic_error_view(request, "Erro de teste!")),
+
+    
+    # Preparar Compartilhamento de Post
+    path("post/<int:post_id>/preparar-share/", views.preparar_compartilhamento, name="preparar_compartilhamento"),
+    
+    # Post Publica
+    path('post/<int:id>/', views.post_detail, name='post_detail'),
+    
+    # Compartilhar Post com Notificação
+    path('post/<int:post_id>/notificar/<str:username>/', views.notificar_post, name='notificar_post'),
+
 ]
